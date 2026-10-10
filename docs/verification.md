@@ -2,7 +2,7 @@
 
 Verified on 2026-10-10 UTC against implementation commit
 [`9467fdc`](https://github.com/sagan-software/Bevy-Crosshair/commit/9467fdcefdb97177e6d1b661fd30f760591e3344).
-Later documentation changes do not alter this measured code.
+Later documentation and lint-command metadata changes do not alter this measured code.
 
 ## Published artifact
 
@@ -59,6 +59,11 @@ Public Dylints passed. The activation probe rejected its known ownership violati
 and accepted the corrected fixture. The applicable personal Rust lint runner passed
 strict Clippy and private Dylints without candidate diagnostics. `nix flake check`
 passed on x86_64-linux; other declared platforms were not executed.
+
+The [implementation CI run](https://github.com/sagan-software/Bevy-Crosshair/actions/runs/38017504183)
+passed every job. Its Nix checker also reported missing lint-app descriptions.
+Both apps now define `meta.description`; a subsequent upstream Nix check passed
+without those diagnostics.
 
 Test execution and independent Criterion execution each reported 100% library
 Rust line coverage. Benchmark execution covered 619 production lines and all 84

@@ -92,13 +92,14 @@
         system:
         let
           e = environment system;
-          app = drv: {
+          app = description: drv: {
             type = "app";
             program = "${drv}/bin/${drv.name}";
+            meta = { inherit description; };
           };
         in
         {
-          dylint = app (
+          dylint = app "Check Rust with the pinned Dylints" (
             e.command "crosshair-dylint" e.lintShell.nativeBuildInputs (
               ''
                 unset CARGO_BUILD_BUILD_DIR RUSTC_WRAPPER RUSTC_WORKSPACE_WRAPPER
@@ -112,7 +113,7 @@
               ''
             )
           );
-          lint-probe = app (
+          lint-probe = app "Verify that Dylints reject a known violation" (
             e.command "crosshair-lint-probe" e.lintShell.nativeBuildInputs (
               ''
                 export RUSTUP_HOME="''${XDG_CACHE_HOME:-$HOME/.cache}/bevy-crosshair/rustup"
