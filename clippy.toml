@@ -1,0 +1,2 @@
+# Match the supported compiler used by Cargo and the Nix shell.
+msrv = "1.99.0"

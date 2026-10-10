@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#e9eff5">
+  <title>Bevy Crosshair</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header">
+    <h1>Bevy Crosshair</h1>
+    <nav aria-label="Project"><a href="api/bevy_crosshair/">Rust API</a><a href="https://github.com/sagan-software/Bevy-Crosshair">GitHub</a></nav>
+  </header>
+  <main>
+    <section class="preview" aria-label="Live crosshair preview">
+      <div class="preview-bar"><span id="style-name">Dynamic quad</span><span class="measurement"><output id="fps">Starting</output><span id="frame-time"></span></span></div>
+      <div class="viewport" id="viewport"><canvas id="crosshair" aria-label="Bevy crosshair renderer. Use the settings panel to change its appearance."></canvas><div id="loading" role="status">Loading renderer…</div></div>
+      <div class="preview-actions"><button id="fire" class="primary" disabled>Fire</button><label class="check"><input id="sound" type="checkbox">Hit sound</label><span id="receipt" role="status">No hits</span></div>
+      <p id="error" role="alert" hidden></p>
+    </section>
+    <section class="editor" aria-label="Crosshair settings">
+      <div class="tabs" role="tablist" aria-label="Settings category">
+        <button role="tab" aria-selected="true" aria-controls="shape" id="tab-shape">Crosshair</button>
+        <button role="tab" aria-selected="false" aria-controls="hit" id="tab-hit" tabindex="-1">Hits</button>
+        <button role="tab" aria-selected="false" aria-controls="game" id="tab-game" tabindex="-1">Simulation</button>
+        <button role="tab" aria-selected="false" aria-controls="config" id="tab-config" tabindex="-1">Config</button>
+      </div>
+      <div id="shape" role="tabpanel" aria-labelledby="tab-shape" class="panel"></div>
+      <div id="hit" role="tabpanel" aria-labelledby="tab-hit" class="panel" hidden></div>
+      <div id="game" role="tabpanel" aria-labelledby="tab-game" class="panel" hidden></div>
+      <div id="config" role="tabpanel" aria-labelledby="tab-config" class="panel" hidden>
+        <label for="configuration">CS2 console settings</label>
+        <textarea id="configuration" spellcheck="false" rows="18"></textarea>
+        <div class="button-row"><button id="apply">Apply</button><button id="copy">Copy</button><button id="reset">Reset defaults</button></div>
+        <p class="note">Current CS2 1.41.9.0 settings. <a href="https://github.com/sagan-software/Bevy-Crosshair/blob/main/docs/cs2.md">Compatibility notes</a></p>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

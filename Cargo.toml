@@ -1,0 +1,54 @@
+[package]
+name = "bevy_crosshair"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.99.0"
+description = "Configurable Bevy crosshairs with typed hit feedback"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/sagan-software/Bevy-Crosshair"
+keywords = ["bevy", "crosshair", "gamedev", "hud"]
+categories = ["game-development", "rendering"]
+
+[workspace]
+resolver = "3"
+members = ["."]
+
+[[workspace.metadata.dylint.libraries]]
+git = "https://github.com/sagan-software/dylints"
+rev = "03fc5f93c2bcdd02a8f7f2fbe2710a315d5e06a9"
+pattern = ["crates/sagan-lints"]
+
+[features]
+default = []
+render = ["bevy/bevy_ui_render", "bevy/bevy_ui", "bevy/bevy_asset", "bevy/bevy_color", "bevy/bevy_shader", "bevy/bevy_render"]
+playground = ["render", "bevy/bevy_winit", "bevy/bevy_core_pipeline", "bevy/bevy_log", "bevy/webgl2", "bevy/x11", "bevy/default_font", "bevy/multi_threaded"]
+
+[dependencies]
+arrayvec = "0.7.0"
+bevy = { version = "0.20.0", default-features = false, features = ["std", "bevy_color"] }
+strum = { version = "0.28.0", features = ["derive"] }
+thiserror = "2.0.0"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+criterion = { version = "0.8.0", features = ["html_reports"] }
+naga = { version = "30.0.0", features = ["wgsl-in"] }
+stats_alloc = "0.1.0"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "=0.2.127"
+
+[[example]]
+name = "playground"
+required-features = ["playground"]
+
+[[bench]]
+name = "crosshair"
+harness = false
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+
+[lints.rust]
+unsafe_code = "forbid"
+missing_docs = "warn"
