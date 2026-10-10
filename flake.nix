@@ -50,6 +50,11 @@
             pkgs.nixfmt
             pkgs.nodejs
           ];
+          profilingTools = [
+            pkgs.cargo-flamegraph
+            pkgs.samply
+          ]
+          ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [ pkgs.perf ];
           lint = dylints.packages.${system}.default;
           lintShell = dylints.devShells.${system}.default;
           command =
@@ -67,6 +72,7 @@
           inherit
             pkgs
             tools
+            profilingTools
             libraries
             lint
             lintShell
@@ -82,7 +88,7 @@
         in
         {
           default = e.pkgs.mkShell {
-            packages = e.tools;
+            packages = e.tools ++ e.profilingTools;
             buildInputs = e.libraries;
             LD_LIBRARY_PATH = e.pkgs.lib.makeLibraryPath e.libraries;
           };

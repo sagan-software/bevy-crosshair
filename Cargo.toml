@@ -49,6 +49,10 @@ harness = false
 lto = "thin"
 codegen-units = 1
 
+[profile.profiling]
+inherits = "release"
+debug = 1
+
 [lints.rust]
 unsafe_code = "forbid"
 missing_docs = "warn"

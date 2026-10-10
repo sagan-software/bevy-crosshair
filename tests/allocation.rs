@@ -20,6 +20,8 @@ static ALLOCATOR: &StatsAlloc<System> = &INSTRUMENTED_SYSTEM;
 
 #[test]
 fn geometry_allocates_nothing_for_every_style_and_empty_output() {
+    // The first draw also measures initialization of shared color conversion data.
+    colored_geometry_allocates_nothing();
     // Construct owned fixtures before starting each measured region.
     let input = CrosshairInput::default();
     let marker = HitMarker::default();
@@ -39,6 +41,23 @@ fn geometry_allocates_nothing_for_every_style_and_empty_output() {
     assert!(empty.draw(&input, None).as_ref().is_empty());
     assert_eq!(region.change().allocations, 0);
     fill_and_every_marker_animation_allocate_nothing();
+}
+
+/// Includes arbitrary byte colors and the first conversion in the allocation boundary.
+fn colored_geometry_allocates_nothing() {
+    // Parse owned settings before measuring the first geometry call in this test process.
+    let crosshair: Crosshair =
+        "cl_crosshaircolor_r 127; cl_crosshaircolor_g 67; cl_crosshairoutline_b 193"
+            .parse()
+            .expect("valid byte colors");
+    let input = CrosshairInput::default();
+    let region = Region::new(ALLOCATOR);
+    std::hint::black_box(crosshair.draw(&input, None));
+    // Count both fresh allocations and reallocations, including their allocated bytes.
+    let stats = region.change();
+    assert_eq!(stats.allocations, 0);
+    assert_eq!(stats.reallocations, 0);
+    assert_eq!(stats.bytes_allocated, 0);
 }
 
 /// Checks new geometry in the same allocator test, avoiding concurrent measurements.

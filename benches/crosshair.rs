@@ -128,6 +128,48 @@ fn gallery(criterion: &mut Criterion) {
     });
 }
 
+/// Measures arbitrary console colors, including the gallery's non-primary colors.
+fn colored_geometry(criterion: &mut Criterion) {
+    // Retain validated settings outside timing; changing input still regenerates every drawing.
+    let gallery: [Crosshair; 100] = std::array::from_fn(|index| {
+        let mut crosshair = Crosshair::default()
+            .with_style(Style::try_from((index % 10) as u8).expect("valid style"))
+            .with_fill(bevy::color::LinearRgba::BLUE.with_alpha(0.2))
+            .with_dot_shape(bevy_crosshair::DotShape::Circle);
+        // Fixed byte permutations make repeated baseline and candidate runs use identical colors.
+        for (channel, offset) in [("r", 31), ("g", 97), ("b", 163), ("a", 229)] {
+            let foreground = ((index * 37 + offset) % 256).to_string();
+            let border = ((index * 53 + offset) % 256).to_string();
+            crosshair
+                .set(&format!("cl_crosshaircolor_{channel}"), &foreground)
+                .expect("valid byte");
+            crosshair
+                .set(&format!("cl_crosshairoutline_{channel}"), &border)
+                .expect("valid byte");
+        }
+        crosshair
+    });
+    let mut input = CrosshairInput::default();
+    criterion.bench_function("gallery/100_colored_geometry", |bench| {
+        bench.iter(|| {
+            // Exercise new geometry on every iteration, including styles that react to spread.
+            input.spread = (input.spread + 1.0) % 41.0;
+            for crosshair in &gallery {
+                black_box(crosshair.draw(black_box(&input), None));
+            }
+        })
+    });
+    // A single colored crosshair separates geometry cost from the batch loop.
+    let mut group = criterion.benchmark_group("colored_geometry");
+    for crosshair in gallery.iter().take(10) {
+        let style = crosshair.style();
+        group.bench_function(style.to_string(), |bench| {
+            bench.iter(|| black_box(crosshair.draw(black_box(&input), None)))
+        });
+    }
+    group.finish();
+}
+
 /// Keeps validation and rare policy paths in the measured benchmark executable.
 fn conformance(criterion: &mut Criterion) {
     let scenarios: [(&str, fn()); 7] = [
@@ -178,6 +220,7 @@ fn main() {
     operations(&mut criterion);
     marker_modes(&mut criterion);
     gallery(&mut criterion);
+    colored_geometry(&mut criterion);
     // Coverage mode still executes boundary scenarios that ordinary timings rarely reach.
     conformance(&mut criterion);
     #[cfg(feature = "playground")]

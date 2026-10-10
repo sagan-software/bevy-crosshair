@@ -7,6 +7,9 @@ A Bevy 0.20 plugin for configurable crosshairs and typed hit feedback.
 [CS2 compatibility](docs/cs2.md) · [Implementation plan](PLAN.md) ·
 [Verification](docs/verification.md) · [Playground expansion plan](docs/playground-expansion.md)
 
+[Performance measurements and profiling](docs/performance.md) document a 57.6%
+reduction in CPU time for generating 100 crosshairs with custom colors.
+
 The playground runs the Rust plugin as WebAssembly. Change settings, supply weapon
 state, and fire hits with damage metadata. An independent event observer updates
 the receipt and optional hit sound. Frame measurements come from Bevy's real clock.

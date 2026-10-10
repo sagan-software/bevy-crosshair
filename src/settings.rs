@@ -6,6 +6,7 @@ use bevy::color::LinearRgba;
 use bevy::color::Srgba;
 use std::fmt;
 use std::str::FromStr;
+use std::sync::OnceLock;
 use std::time::Duration;
 
 /// Converts one setting at the text boundary, retaining its typed value.
@@ -247,24 +248,12 @@ settings! {
 impl Settings {
     /// Resolves byte color channels to the renderer's linear color space.
     pub(super) fn color(&self) -> LinearRgba {
-        Srgba::rgba_u8(
-            self.color_r.0,
-            self.color_g.0,
-            self.color_b.0,
-            self.color_a.0,
-        )
-        .into()
+        linear_color(self.color_r, self.color_g, self.color_b, self.color_a)
     }
 
     /// Resolves the independently configured outline color.
     pub(super) fn border(&self) -> LinearRgba {
-        Srgba::rgba_u8(
-            self.border_r.0,
-            self.border_g.0,
-            self.border_b.0,
-            self.border_a.0,
-        )
-        .into()
+        linear_color(self.border_r, self.border_g, self.border_b, self.border_a)
     }
 
     /// Resolves each grenade's independently configured visibility and delay.
@@ -279,4 +268,26 @@ impl Settings {
         };
         is_enabled.then_some(delay.0)
     }
+}
+
+/// Converts validated byte channels without repeating gamma correction per primitive.
+fn linear_color(red: Channel, green: Channel, blue: Channel, alpha: Channel) -> LinearRgba {
+    /// One kilobyte of immutable conversions shared by every configuration and thread.
+    static LINEAR: OnceLock<[f32; 256]> = OnceLock::new();
+    // Bevy 0.20's Srgba conversion remains authoritative, including platform-specific float bits.
+    // Generate every byte value once; neither initialization nor lookup allocates.
+    let table = LINEAR.get_or_init(|| {
+        std::array::from_fn(|index| {
+            let byte = u8::try_from(index).expect("the table contains exactly 256 byte values");
+            let color: LinearRgba = Srgba::rgb_u8(byte, 0, 0).into();
+            color.red
+        })
+    });
+    let [red, green, blue] = [red, green, blue].map(|channel| {
+        *table
+            .get(usize::from(channel.0))
+            .expect("every byte channel has a linear conversion")
+    });
+    // Alpha is linear already; preserve Bevy's byte-to-unit division without gamma correction.
+    LinearRgba::new(red, green, blue, f32::from(alpha.0) / 255.0)
 }
