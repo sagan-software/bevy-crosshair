@@ -4,19 +4,30 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#e9eff5">
-  <title>Bevy Crosshair</title>
+  <title>bevy-crosshair</title>
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header class="header">
-    <h1>Bevy Crosshair</h1>
-    <nav aria-label="Project"><a href="api/bevy_crosshair/">Rust API</a><a href="https://github.com/sagan-software/Bevy-Crosshair">GitHub</a></nav>
+    <h1>bevy-crosshair</h1>
+    <nav aria-label="Project"><a href="api/bevy_crosshair/">Rust API</a><a href="https://github.com/sagan-software/bevy-crosshair">GitHub</a></nav>
   </header>
   <main>
     <section class="preview" aria-label="Live crosshair preview">
       <div class="preview-bar"><span id="style-name">Dynamic quad</span><span class="measurement"><output id="fps">Starting</output><span id="frame-time"></span></span></div>
-      <div class="viewport" id="viewport"><canvas id="crosshair" aria-label="Bevy crosshair renderer. Use the settings panel to change its appearance."></canvas><div id="loading" role="status">Loading renderer…</div></div>
+      <div class="preview-tools">
+        <label for="background">Background</label>
+        <select id="background">
+          <option value="solid">Solid</option>
+          <option value="cs2-dust2" data-image="https://cdn.fastly.steamstatic.com/apps/csgo/images/csgo_react/cs2/maps/dust2_ct_ramp_s2.jpg" data-source="https://www.counter-strike.net/cs2" data-credit="Valve">CS2 · Dust II</option>
+          <option value="cs2-overpass" data-image="https://cdn.fastly.steamstatic.com/apps/csgo/images/csgo_react/cs2/maps/overpass_lower_tunnel_s2.jpg" data-source="https://www.counter-strike.net/cs2" data-credit="Valve">CS2 · Overpass</option>
+          <option value="valorant-ascent" data-image="https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/93f5b5f274df64d938051c4ca8577995190e711a-914x514.jpg?accountingTag=VAL" data-source="https://playvalorant.com/en-us/maps/" data-credit="Riot Games">VALORANT · Ascent</option>
+          <option value="valorant-icebox" data-image="https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/91422206c56df7177495b96a26021d6379de8079-1980x1083.jpg?accountingTag=VAL&amp;fm=webp&amp;w=1280&amp;q=85" data-source="https://playvalorant.com/en-us/maps/" data-credit="Riot Games">VALORANT · Icebox</option>
+        </select>
+        <a id="background-credit" target="_blank" rel="noopener noreferrer" hidden></a>
+      </div>
+      <div class="viewport" id="viewport"><canvas id="crosshair" aria-label="Bevy crosshair renderer. Use the settings panel to change its appearance."></canvas><div id="loading" role="status">Loading renderer…</div><p id="background-status" role="status" hidden></p></div>
       <div class="preview-actions"><button id="fire" class="primary" disabled>Fire</button><label class="check"><input id="sound" type="checkbox">Hit sound</label><span id="receipt" role="status">No hits</span></div>
       <p id="error" role="alert" hidden></p>
     </section>
@@ -34,7 +45,7 @@
         <label for="configuration">CS2 console settings</label>
         <textarea id="configuration" spellcheck="false" rows="18"></textarea>
         <div class="button-row"><button id="apply">Apply</button><button id="copy">Copy</button><button id="reset">Reset defaults</button></div>
-        <p class="note">Current CS2 1.41.9.0 settings. <a href="https://github.com/sagan-software/Bevy-Crosshair/blob/main/docs/cs2.md">Compatibility notes</a></p>
+        <p class="note">Current CS2 1.41.9.0 settings. <a href="https://github.com/sagan-software/bevy-crosshair/blob/main/docs/cs2.md">Compatibility notes</a></p>
       </div>
     </section>
   </main>

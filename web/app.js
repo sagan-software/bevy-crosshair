@@ -37,6 +37,32 @@ window.crosshairHit = (damage, kind) => {
   }
 };
 function error(message) { $('error').hidden = !message; $('error').textContent = message || ''; }
+let backgroundRequest = 0;
+async function background() {
+  const request = ++backgroundRequest;
+  const option = $('background').selectedOptions[0];
+  const { image: source, credit, source: link } = option.dataset;
+  $('viewport').style.backgroundImage = 'none';
+  $('background-credit').hidden = !source;
+  $('background-status').hidden = !source;
+  if (!source) return;
+  $('background-credit').textContent = credit;
+  $('background-credit').href = link;
+  $('background-status').textContent = 'Loading background…';
+  const image = new Image();
+  image.src = source;
+  try {
+    await image.decode();
+    // A slower previous selection must not replace the latest scene.
+    if (request !== backgroundRequest) return;
+    $('viewport').style.backgroundImage = `url("${source}")`;
+    $('background-status').hidden = true;
+  } catch {
+    if (request !== backgroundRequest) return;
+    $('background-status').textContent = 'Background unavailable. Choose another background.';
+  }
+}
+$('background').addEventListener('change', background);
 function attempt(action) { try { action(); error(''); } catch (cause) { error(String(cause)); } }
 function parse(source) { return Object.fromEntries(source.trim().split('\n').map((line) => line.split(' '))); }
 function text() { return Object.entries(settings).map(([name, value]) => `${name} ${value}`).join('\n') + '\n'; }

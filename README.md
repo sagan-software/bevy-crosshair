@@ -1,9 +1,9 @@
-# Bevy Crosshair
+# bevy-crosshair
 
 A Bevy 0.20 plugin for configurable crosshairs and typed hit feedback.
 
-[Playground](https://sagan-software.github.io/Bevy-Crosshair/) ·
-[Rust API](https://sagan-software.github.io/Bevy-Crosshair/api/bevy_crosshair/) ·
+[Playground](https://sagan-software.github.io/bevy-crosshair/) ·
+[Rust API](https://sagan-software.github.io/bevy-crosshair/api/bevy_crosshair/) ·
 [CS2 compatibility](docs/cs2.md) · [Implementation plan](PLAN.md) ·
 [Verification](docs/verification.md)
 
@@ -24,7 +24,7 @@ Use Rust 1.99.0 or newer.
 ```toml
 [dependencies]
 bevy = "0.20.0"
-bevy_crosshair = { git = "https://github.com/sagan-software/Bevy-Crosshair", features = ["render"] }
+bevy-crosshair = { git = "https://github.com/sagan-software/bevy-crosshair", features = ["render"] }
 ```
 
 ```rust
@@ -145,6 +145,22 @@ Browser FPS is a separate measurement. The display reports actual Bevy frames pe
 elapsed real second and the longest frame in that interval. Browser visibility,
 display refresh, GPU, and host load affect the result; no universal FPS guarantee
 is implied.
+
+## Playground backgrounds
+
+The Background selector offers Solid, CS2 Dust II and Overpass, and VALORANT
+Ascent and Icebox. The preview fits the browser window while settings scroll
+independently. The transparent Bevy canvas renders over the selected image.
+
+Game images load from publisher servers when selected. Each scene links to its
+publisher. Failed loads retain the solid background and show recovery text.
+See [background sources](docs/backgrounds.md) for provenance.
+
+To check layout and background request handling, evaluate
+[scripts/check_playground.js](scripts/check_playground.js) in the loaded page.
+Run it at 1280 × 800, 1280 × 400, 390 × 844, 844 × 390, and 320 × 568 CSS pixels.
+The result must report `passed: true`. It restores the selected background after
+checking controlled image success, failure, and stale completions.
 
 ## License
 

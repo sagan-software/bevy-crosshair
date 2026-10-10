@@ -1,14 +1,16 @@
 # Verification
 
 Verified on 2026-10-10 UTC against implementation commit
-[`9467fdc`](https://github.com/sagan-software/Bevy-Crosshair/commit/9467fdcefdb97177e6d1b661fd30f760591e3344).
-Later documentation and lint-command metadata changes do not alter this measured code.
+[`9467fdc`](https://github.com/sagan-software/bevy-crosshair/commit/9467fdcefdb97177e6d1b661fd30f760591e3344).
+The sections below record the initial implementation. The final section records
+the later viewport, background, and naming changes. Links use the current repository
+name; the initial raw samples retain the original URLs.
 
 ## Published artifact
 
-The [Pages deployment](https://github.com/sagan-software/Bevy-Crosshair/actions/runs/38017504194)
-published the [playground](https://sagan-software.github.io/Bevy-Crosshair/) and
-[Rust API](https://sagan-software.github.io/Bevy-Crosshair/api/bevy_crosshair/).
+The [Pages deployment](https://github.com/sagan-software/bevy-crosshair/actions/runs/38017504194)
+published the [playground](https://sagan-software.github.io/bevy-crosshair/) and
+[Rust API](https://sagan-software.github.io/bevy-crosshair/api/bevy_crosshair/).
 Both pages returned HTTP 200. The published WebAssembly loaded and rendered in
 foreground Chrome. The T3 preview also loads the public playground.
 
@@ -60,7 +62,7 @@ and accepted the corrected fixture. The applicable personal Rust lint runner pas
 strict Clippy and private Dylints without candidate diagnostics. `nix flake check`
 passed on x86_64-linux; other declared platforms were not executed.
 
-The [implementation CI run](https://github.com/sagan-software/Bevy-Crosshair/actions/runs/38017504183)
+The [implementation CI run](https://github.com/sagan-software/bevy-crosshair/actions/runs/38017504183)
 passed every job. Its Nix checker also reported missing lint-app descriptions.
 Both apps now define `meta.description`; a subsequent upstream Nix check passed
 without those diagnostics.
@@ -90,3 +92,31 @@ All 43 settings in the selected CS2 profile have validation and playground contr
 Exact CS2 pixel parity remains unverified. Negative-gap behavior, radial geometry,
 scope shapes, grenade guides, and friendly warnings include local reconstructions.
 [Compatibility notes](cs2.md) define each difference and its conformance evidence.
+
+## Viewport and background update
+
+The repository and Cargo package are named `bevy-crosshair`. Rust imports retain
+`bevy_crosshair`, following Cargo's hyphen-to-underscore mapping.
+
+The regression check first failed against the original page at 1280 × 400 CSS
+pixels because the title, page height, preview visibility, Fire visibility, and
+background options violated the requested behavior. After the fix,
+`scripts/check_playground.js` passed at 1280 × 800, 1280 × 400, 390 × 844,
+844 × 390, and 320 × 568. It also passed in foreground Chrome at 1247 × 660.
+The checks cover container bounds, independent editor scrolling, background
+success, failure fallback, credit updates, and stale success/failure completions.
+All four actual publisher images loaded. Desktop and mobile visual review passed.
+
+The local release WebAssembly build ran in foreground Chrome with document focus
+and visibility confirmed. The 839 × 405 drawing buffer matched the canvas CSS
+size at device pixel ratio 1. Each background loaded before a 5.5-second sample;
+intervals ending within the first 1.1 seconds were excluded. Background means
+ranged from 59.911 to 60.006 FPS, with a longest sampled frame of 29.3 ms.
+The independent hit receipt reported `Hit · 40 damage · 1 events`.
+[Raw background samples](background-frames.json) preserve the local URL and values.
+These measurements establish nominal 60 FPS on this display, with the same
+strict-minimum and hardware limits described above.
+
+The library source is unchanged. LLVM line coverage continues to measure library
+Rust only; it excludes the changed playground window setup and JavaScript.
+The browser checks provide direct behavior evidence for those changed paths.

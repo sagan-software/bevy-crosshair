@@ -18,7 +18,10 @@ blue focus states. Use system sans text and tabular numeric values.
 STORY: Choose a style, change geometry, then simulate movement, recoil, and hits.
 FIRST VIEWPORT: A compact header, a large preview on the left, and a 360-pixel
 settings panel on the right. Put the Fire button below the preview. On mobile,
-place a sticky preview above the controls. Show measured FPS beside the preview.
+split the available height between the preview and an independently scrolling editor.
+Use a side-by-side layout in short landscape windows. Keep the canvas inside its
+container. Show measured FPS beside the preview. Put a background selector above
+the canvas with publisher credits, loading state, and a solid fallback.
 FORM: A settings editor chosen under the user's delegated design defaults.
 The signature interaction is the same typed hit updating both a visible marker
 and an independent event receipt with optional sound. No concept-seed is needed

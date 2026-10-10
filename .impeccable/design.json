@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-10T02:43:28Z",
-  "title": "Design System: Bevy Crosshair",
+  "generatedAt": "2026-10-10T03:25:05Z",
+  "title": "Design System: bevy-crosshair",
   "extensions": {
     "colorMeta": {
       "primary": {
@@ -262,6 +262,10 @@
         "displayName": "Measurement",
         "purpose": "Compact FPS and frame-time values."
       },
+      "background-select-mobile": {
+        "displayName": "Mobile background selector",
+        "purpose": "Uses 16px select text at widths up to 760px."
+      },
       "configuration": {
         "displayName": "Configuration",
         "purpose": "Monospace console settings text."
@@ -285,6 +289,10 @@
       {
         "name": "mobile",
         "value": "760px"
+      },
+      {
+        "name": "short-landscape",
+        "value": "max-height: 500px and min-width: 600px"
       }
     ]
   },
@@ -311,7 +319,7 @@
       "refersTo": "settings-tab",
       "description": "Four equal-width category tabs; selected state marks the open panel.",
       "html": "<div class=\"ds-tabs\" role=\"tablist\"><button class=\"ds-tab ds-tab-selected\" role=\"tab\" aria-selected=\"true\">Crosshair</button><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\">Hits</button><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\">Simulation</button><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\">Config</button></div>",
-      "css": ".ds-tabs { position: sticky; top: 0; z-index: 1; display: grid; grid-template-columns: repeat(4, 1fr); padding: 8px 8px 0; border-bottom: 1px solid var(--line); background: #f5f8fb; } .ds-tab { min-width: 0; padding: 12px 5px; border: 0; border-radius: 4px 4px 0 0; background: transparent; color: var(--muted); font: inherit; font-size: 12px; } .ds-tab:hover { color: var(--accent); } .ds-tab:focus-visible { outline: 3px solid #3880dd; outline-offset: 3px; } .ds-tab-selected, .ds-tab-selected:hover { background: #e1ecf9; color: #114eaa; box-shadow: inset 0 -2px var(--accent); } @media (max-width: 760px) { .ds-tabs { position: static; } }"
+      "css": ".ds-tabs { position: sticky; top: 0; z-index: 1; display: grid; grid-template-columns: repeat(4, 1fr); padding: 8px 8px 0; border-bottom: 1px solid var(--line); background: #f5f8fb; } .ds-tab { min-width: 0; padding: 12px 5px; border: 0; border-radius: 4px 4px 0 0; background: transparent; color: var(--muted); font: inherit; font-size: 12px; } .ds-tab:hover { color: var(--accent); } .ds-tab:focus-visible { outline: 3px solid #3880dd; outline-offset: 3px; } .ds-tab-selected, .ds-tab-selected:hover { background: #e1ecf9; color: #114eaa; box-shadow: inset 0 -2px var(--accent); }"
     },
     {
       "name": "Header navigation",
@@ -350,26 +358,37 @@
       "css": ".ds-config-label { display: block; color: #182c41; font: inherit; } .ds-config { width: 100%; margin-top: 10px; padding: 10px; resize: vertical; border: 1px solid #b3c2d1; border-radius: 4px; background: white; color: #233f5a; font-family: ui-monospace, monospace; font-size: 11px; line-height: 1.65; } .ds-config:focus-visible { outline: 3px solid #3880dd; outline-offset: 3px; }"
     },
     {
+      "name": "Background selector",
+      "kind": "custom",
+      "refersTo": "select",
+      "description": "Compact scene selector defaults to Solid, links image credit to the publisher, and reports loading or unavailable images.",
+      "html": "<div class=\"ds-preview-tools\"><label for=\"ds-background\">Background</label><select class=\"ds-background-select\" id=\"ds-background\"><option value=\"solid\">Solid</option><option value=\"cs2-dust2\" data-image=\"https://cdn.fastly.steamstatic.com/apps/csgo/images/csgo_react/cs2/maps/dust2_ct_ramp_s2.jpg\" data-source=\"https://www.counter-strike.net/cs2\" data-credit=\"Valve\">CS2 · Dust II</option><option value=\"cs2-overpass\" data-image=\"https://cdn.fastly.steamstatic.com/apps/csgo/images/csgo_react/cs2/maps/overpass_lower_tunnel_s2.jpg\" data-source=\"https://www.counter-strike.net/cs2\" data-credit=\"Valve\">CS2 · Overpass</option><option value=\"valorant-ascent\" data-image=\"https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/93f5b5f274df64d938051c4ca8577995190e711a-914x514.jpg?accountingTag=VAL\" data-source=\"https://playvalorant.com/en-us/maps/\" data-credit=\"Riot Games\">VALORANT · Ascent</option><option value=\"valorant-icebox\" data-image=\"https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/91422206c56df7177495b96a26021d6379de8079-1980x1083.jpg?accountingTag=VAL&amp;fm=webp&amp;w=1280&amp;q=85\" data-source=\"https://playvalorant.com/en-us/maps/\" data-credit=\"Riot Games\">VALORANT · Icebox</option></select><a class=\"ds-background-credit\" target=\"_blank\" rel=\"noopener noreferrer\" hidden></a></div><div class=\"ds-viewport\"><p class=\"ds-background-status\" role=\"status\" hidden>Loading background…</p></div>",
+      "css": ".ds-preview-tools { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; } .ds-preview-tools label { color: #52667a; font-size: 12px; } .ds-background-select { flex: 1; min-width: 0; max-width: 280px; padding: 8px; border: 1px solid #b3c2d1; border-radius: 4px; background: white; color: #182c41; font: inherit; } .ds-background-select:focus-visible { outline: 3px solid #3880dd; outline-offset: 3px; } .ds-background-credit { color: #175fc3; font-size: 12px; white-space: nowrap; text-underline-offset: 3px; } .ds-background-credit:focus-visible { outline: 3px solid #3880dd; outline-offset: 3px; } @media (max-width: 760px) { .ds-preview-tools { gap: 8px; } .ds-background-select { font-size: 16px; max-width: none; } } .ds-viewport { position: relative; min-height: 160px; overflow: hidden; border-radius: 6px; background: #1a2633 center / cover no-repeat; } .ds-background-status { position: absolute; bottom: 0; margin: 12px; padding: 8px 12px; background: #1a2633; color: #d6e1ee; font-size: 12px; pointer-events: none; }"
+    },
+    {
       "name": "Live preview",
       "kind": "custom",
-      "description": "Renderer surface remains above the editor and sticks on mobile.",
-      "html": "<section class=\"ds-preview\"><div class=\"ds-preview-bar\"><span>Dynamic quad</span><output>Starting</output></div><div class=\"ds-viewport\"></div></section>",
-      "css": ".ds-preview { display: flex; min-width: 0; flex-direction: column; padding: 24px; background: #e9eff5; } .ds-preview-bar { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 12px; } .ds-preview-bar output { font-variant-numeric: tabular-nums; } .ds-viewport { min-height: 250px; flex: 1; overflow: hidden; border-radius: 6px; background: #1a2633; } @media (max-width: 760px) { .ds-preview { position: sticky; top: 0; z-index: 3; padding: 12px 16px; } .ds-viewport { height: 30dvh; min-height: 150px; flex: none; } }"
+      "description": "Canvas and controls share the window-constrained preview row; the viewport grows within its remaining space.",
+      "html": "<section class=\"ds-preview\"><div class=\"ds-preview-bar\"><span>Dynamic quad</span><output>Starting</output></div><div class=\"ds-preview-tools\"><label for=\"ds-background\">Background</label><select class=\"ds-background-select\" id=\"ds-background\"><option value=\"solid\">Solid</option><option value=\"cs2-dust2\" data-image=\"https://cdn.fastly.steamstatic.com/apps/csgo/images/csgo_react/cs2/maps/dust2_ct_ramp_s2.jpg\" data-source=\"https://www.counter-strike.net/cs2\" data-credit=\"Valve\">CS2 · Dust II</option><option value=\"cs2-overpass\" data-image=\"https://cdn.fastly.steamstatic.com/apps/csgo/images/csgo_react/cs2/maps/overpass_lower_tunnel_s2.jpg\" data-source=\"https://www.counter-strike.net/cs2\" data-credit=\"Valve\">CS2 · Overpass</option><option value=\"valorant-ascent\" data-image=\"https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/93f5b5f274df64d938051c4ca8577995190e711a-914x514.jpg?accountingTag=VAL\" data-source=\"https://playvalorant.com/en-us/maps/\" data-credit=\"Riot Games\">VALORANT · Ascent</option><option value=\"valorant-icebox\" data-image=\"https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/91422206c56df7177495b96a26021d6379de8079-1980x1083.jpg?accountingTag=VAL&amp;fm=webp&amp;w=1280&amp;q=85\" data-source=\"https://playvalorant.com/en-us/maps/\" data-credit=\"Riot Games\">VALORANT · Icebox</option></select><a class=\"ds-background-credit\" target=\"_blank\" rel=\"noopener noreferrer\" hidden></a></div><div class=\"ds-viewport\"><canvas aria-label=\"Bevy crosshair renderer. Use the settings panel to change its appearance.\"></canvas><div class=\"ds-renderer-loading\" role=\"status\">Loading renderer…</div><p class=\"ds-background-status\" role=\"status\" hidden>Loading background…</p></div><div class=\"ds-preview-actions\"><button class=\"ds-primary-button\" type=\"button\">Fire</button><label class=\"ds-check\"><input type=\"checkbox\"><span>Hit sound</span></label><output>No hits</output></div></section>",
+      "css": ".ds-preview { display: flex; min-width: 0; min-height: 0; flex-direction: column; padding: 24px; background: #e9eff5; } .ds-preview-bar { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 12px; } .ds-preview-bar output { font-variant-numeric: tabular-nums; } .ds-preview-tools { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; } .ds-preview-tools label { color: #52667a; font-size: 12px; } .ds-background-select { flex: 1; min-width: 0; max-width: 280px; padding: 8px; border: 1px solid #b3c2d1; border-radius: 4px; background: white; color: #182c41; font: inherit; } .ds-background-select:focus-visible { outline: 3px solid #3880dd; outline-offset: 3px; } .ds-background-credit { color: #175fc3; font-size: 12px; white-space: nowrap; text-underline-offset: 3px; } .ds-background-credit:focus-visible { outline: 3px solid #3880dd; outline-offset: 3px; } @media (max-width: 760px) { .ds-preview-tools { gap: 8px; } .ds-background-select { font-size: 16px; max-width: none; } } .ds-viewport { position: relative; flex: 1; min-height: 0; overflow: hidden; border-radius: 6px; background: #1a2633 center / cover no-repeat; } .ds-viewport canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; } .ds-renderer-loading { position: absolute; inset: 0; display: grid; place-items: center; color: #d6e1ee; pointer-events: none; } .ds-background-status { position: absolute; bottom: 0; margin: 12px; padding: 8px 12px; background: #1a2633; color: #d6e1ee; font-size: 12px; pointer-events: none; } .ds-preview-actions { display: flex; align-items: center; gap: 20px; min-height: 40px; flex-shrink: 0; margin-top: 16px; } .ds-preview-actions output { margin-left: auto; color: #52667a; font-size: 12px; font-variant-numeric: tabular-nums; } @media (max-width: 760px) { .ds-preview { padding: 12px 16px; } .ds-preview-actions { gap: 12px; margin-top: 10px; } }"
     }
   ],
   "narrative": {
     "northStar": "Crosshair settings editor",
-    "overview": "Crosshair settings stay beside their renderer. A dark preview, pale editor, and nearby measured feedback keep adjustment and observation together.",
+    "overview": "Crosshair settings stay beside their renderer. The dark preview can use a solid field or a publisher-hosted map scene. The pale editor and nearby measurements keep changes and feedback in view.",
     "keyCharacteristics": [
       "Pale blue-gray application surfaces frame a dark slate renderer.",
       "Blue marks interactive and selected states.",
       "System sans text carries the interface; configuration text uses monospace.",
-      "The settings editor groups four categories behind tabs."
+      "The settings editor groups four categories behind tabs.",
+      "The preview can show publisher-hosted map scenes with a linked credit."
     ],
     "rules": [],
     "dos": [
       "Do keep the live renderer and its controls immediately available.",
-      "Do keep the preview sticky above the settings editor on narrow screens.",
+      "Do keep the preview and editor inside the window-constrained grid.",
+      "Do keep the settings editor independently scrollable with sticky tabs on desktop and mobile.",
+      "Do default Background to Solid and credit publisher-hosted scenes.",
       "Do preserve the four settings tabs and their current order.",
       "Do use tabular numerals for FPS, frame time, and hit receipt values.",
       "Do keep configuration text in a monospace field."

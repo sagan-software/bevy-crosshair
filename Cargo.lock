@@ -393,6 +393,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "bevy-crosshair"
+version = "0.1.0"
+dependencies = [
+ "arrayvec",
+ "bevy",
+ "criterion",
+ "naga",
+ "stats_alloc",
+ "strum",
+ "thiserror 2.0.21",
+ "wasm-bindgen",
+]
+
+[[package]]
 name = "bevy_a11y"
 version = "0.20.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -662,20 +676,6 @@ dependencies = [
  "bitflags 2.13.2",
  "indexmap",
  "nonmax",
-]
-
-[[package]]
-name = "bevy_crosshair"
-version = "0.1.0"
-dependencies = [
- "arrayvec",
- "bevy",
- "criterion",
- "naga",
- "stats_alloc",
- "strum",
- "thiserror 2.0.21",
- "wasm-bindgen",
 ]
 
 [[package]]

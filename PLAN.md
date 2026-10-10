@@ -1,8 +1,29 @@
-# Bevy Crosshair implementation plan
+# bevy-crosshair implementation plan
+
+## Viewport and background follow-up
+
+Rename the repository, Cargo package, page title, and project links to
+`bevy-crosshair`. Rust imports retain `bevy_crosshair` because Cargo maps package
+hyphens to underscores.
+Keep the canvas inside the browser viewport while the settings scroll separately.
+Offer a solid background and official CS2 and VALORANT map screenshots, with source
+credits, loading feedback, and recovery when a background fails to load.
+
+The initial browser regression failed at 1280 × 400 CSS pixels: the page reached
+790 pixels and the canvas ended at 709.7 pixels. No background selector existed.
+`scripts/check_playground.js` records these checks before the implementation.
+
+Acceptance includes 1280 × 800, 1280 × 400, 390 × 844, 844 × 390, and
+320 × 568 layouts;
+independent settings scrolling; transparent Bevy rendering over each background;
+stale image completion and failure handling; lowercase repository and Pages URLs;
+format, tests, strict Clippy, rustdoc, coverage, Criterion, Dylints, their activation
+probe, the personal Rust lint runner, and Nix checks. Rebuild WebAssembly and verify
+the published playground before handoff. Update standalone documentation last.
 
 ## Intent
 
-Initialize `sagan-software/Bevy-Crosshair` as a small Rust plugin for Bevy 0.20.
+Initialize `sagan-software/bevy-crosshair` as a small Rust plugin for Bevy 0.20.
 Start with a runnable integration example and its public API. Define the types,
 methods, rustdoc examples, and intentional implementation comments before filling
 in behavior. Publish an interactive GitHub Pages playground that uses the actual
@@ -134,7 +155,7 @@ environment supplies it. Signature-only modules compiled, and their documentatio
 was implemented. Intent comments preceded implementation. Public tests then passed;
 a separate internal marker test was added after that external checkpoint.
 
-The public repository exists at <https://github.com/sagan-software/Bevy-Crosshair>.
+The public repository exists at <https://github.com/sagan-software/bevy-crosshair>.
 The implementation was pushed as `9467fdcefdb97177e6d1b661fd30f760591e3344`.
 Its author and committer are Bill Curry, using the configured Git identity.
 
@@ -172,3 +193,10 @@ on the 60 Hz verification display. The longest sampled frame was 26 ms. These
 measurements establish nominal 60 FPS on that device, not a strict lower bound
 for every interval or frame. See [the verification record](docs/verification.md)
 for the environment, raw samples, deployed artifact, and remaining limits.
+
+The viewport regression and background request checks pass at all five planned
+sizes. The visual reviewer returned `ship`. Publisher image sources and fallback
+behavior are recorded in [background sources](docs/backgrounds.md). Foreground
+Chrome background means ranged from 59.911 to 60.006 FPS on the 60 Hz display.
+The transparent canvas drawing buffer matched its CSS bounds. These changes do
+not alter the public plugin API or its documented CS2 compatibility limits.

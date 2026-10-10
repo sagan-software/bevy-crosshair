@@ -2,6 +2,7 @@
 
 use bevy::prelude::*;
 use bevy::window::PresentMode;
+use bevy::window::WindowResizeConstraints;
 use bevy_crosshair::Crosshair;
 use bevy_crosshair::CrosshairInput;
 use bevy_crosshair::CrosshairPlugin;
@@ -85,16 +86,27 @@ pub(super) fn run() {
     let mut app = App::new();
     app.add_plugins(DefaultPlugins.set(WindowPlugin {
         primary_window: Some(Window {
-            title: "Bevy Crosshair".into(),
+            title: "bevy-crosshair".into(),
             canvas: cfg!(target_arch = "wasm32").then(|| "#crosshair".into()),
             fit_canvas_to_parent: true,
+            // The page owns browser dimensions and paints the selected scene below the canvas.
+            transparent: cfg!(target_arch = "wasm32"),
+            resize_constraints: WindowResizeConstraints {
+                min_width: 1.0,
+                min_height: 1.0,
+                ..default()
+            },
             present_mode: PresentMode::AutoNoVsync,
             ..default()
         }),
         ..default()
     }))
     .insert_resource(bevy::winit::WinitSettings::continuous())
-    .insert_resource(ClearColor(Color::srgb(0.10, 0.15, 0.20)))
+    .insert_resource(ClearColor(if cfg!(target_arch = "wasm32") {
+        Color::NONE
+    } else {
+        Color::srgb(0.10, 0.15, 0.20)
+    }))
     .add_plugins(CrosshairPlugin::<Damage>::default())
     .init_resource::<Frames>()
     .add_systems(Startup, setup)

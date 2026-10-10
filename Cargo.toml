@@ -1,11 +1,11 @@
 [package]
-name = "bevy_crosshair"
+name = "bevy-crosshair"
 version = "0.1.0"
 edition = "2024"
 rust-version = "1.99.0"
 description = "Configurable Bevy crosshairs with typed hit feedback"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/sagan-software/Bevy-Crosshair"
+repository = "https://github.com/sagan-software/bevy-crosshair"
 keywords = ["bevy", "crosshair", "gamedev", "hud"]
 categories = ["game-development", "rendering"]
 

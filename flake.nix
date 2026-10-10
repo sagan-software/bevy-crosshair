@@ -1,5 +1,5 @@
 {
-  description = "Bevy Crosshair development and verification";
+  description = "bevy-crosshair development and verification";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";

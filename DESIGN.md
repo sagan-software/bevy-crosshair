@@ -1,5 +1,5 @@
 ---
-name: Bevy Crosshair
+name: bevy-crosshair
 description: Live crosshair preview and settings editor for Bevy developers.
 colors:
   primary: "#175fc3"
@@ -35,6 +35,10 @@ typography:
   measurement:
     fontFamily: "ui-sans-serif, system-ui, sans-serif"
     fontSize: "12px"
+    fontWeight: 400
+  background-select-mobile:
+    fontFamily: "ui-sans-serif, system-ui, sans-serif"
+    fontSize: "16px"
     fontWeight: 400
   configuration:
     fontFamily: "ui-monospace, monospace"
@@ -80,13 +84,13 @@ components:
     padding: "8px"
 ---
 
-# Design System: Bevy Crosshair
+# Design System: bevy-crosshair
 
 ## Overview
 
 Design focus: Crosshair settings editor.
 
-Crosshair settings stay beside their renderer. A dark preview, pale editor, and nearby measured feedback keep adjustment and observation together.
+Crosshair settings stay beside their renderer. The dark preview can use a solid field or a publisher-hosted map scene. The pale editor and nearby measurements keep changes and feedback in view.
 
 Key characteristics:
 
@@ -94,6 +98,7 @@ Key characteristics:
 - Blue marks interactive and selected states.
 - System sans text carries the interface; configuration text uses monospace.
 - The settings editor groups four categories behind tabs.
+- The preview can show publisher-hosted map scenes with a linked credit.
 
 ## Colors
 
@@ -129,19 +134,20 @@ The interface uses one system sans family. The configuration editor switches to 
 - Body: Default size for field labels and general interface text.
 - Navigation: Smaller text for the header links.
 - Measurement: Compact values for FPS and frame time; the FPS value is emphasized.
+- Background selector: Native select text uses 16px at widths up to 760px.
 - Configuration: Monospace text with generous line spacing for console settings.
 
 Keep FPS, frame time, and hit receipt values tabular so changing digits do not shift their alignment.
 
 ## Layout
 
-The desktop header is 68px tall. The main area is capped at 1800px and divides into a flexible preview with a 360px settings editor. The preview pane uses the larger page spacing token for its padding.
+The page body fills the viewport at 100dvh and keeps the header above a height-constrained main grid. The desktop header is 68px tall. The main area is capped at 1800px and divides into a flexible preview with a 360px settings editor. The preview pane uses the larger page spacing token for its padding. The canvas is absolutely positioned at 100% width and height inside the viewport so its drawing buffer cannot grow the grid row.
 
-At widths up to 760px, the header shortens and the layout becomes a single column. The preview sticks to the top while scrolling; its viewport is 30dvh tall with a 150px minimum. The editor follows below it, and its tabs scroll with the settings. On desktop, the editor scrolls independently and its tabs stick to the editor top.
+At widths up to 760px, the 56px header sits above two equal `minmax(0, 1fr)` rows. The preview fills the first row and the editor fills the second. The editor scrolls independently, and its tabs stay sticky at the top on desktop and mobile. At heights up to 500px and widths from 600px, the layout returns to two columns with a 320px editor and a 48px header.
 
-The spacing rhythm comes from the compact steps in the frontmatter. The page uses a wider desktop gutter and tighter mobile preview padding.
+The spacing rhythm comes from the compact steps in the frontmatter. The page uses a wider desktop gutter and tighter mobile preview padding. The background selector uses 16px text on mobile.
 
-Keep the preview above the editor on narrow screens and sticky while settings scroll beneath it.
+Keep the preview and editor inside the window-constrained grid. Keep the editor's tabs sticky while its settings scroll.
 
 ## Elevation & Depth
 
@@ -163,11 +169,13 @@ Range rows place the label and value above a full-width slider. Selects span the
 
 ### Navigation
 
-The header links remain understated. Four equal settings tabs keep the order Crosshair, Hits, Simulation, Config. The selected tab uses a pale blue fill, deeper blue text, and an inset blue bottom rule. Tabs stick while the desktop editor scrolls and become static above the settings on mobile.
+The header links remain understated. Four equal settings tabs keep the order Crosshair, Hits, Simulation, Config. The selected tab uses a pale blue fill, deeper blue text, and an inset blue bottom rule. Tabs stick to the editor top while its settings scroll at every size.
 
 ### Preview and feedback
 
 The preview bar pairs the current crosshair style with live FPS and maximum frame time. Fire and hit-sound controls sit below the renderer with the event receipt aligned to the opposite edge. Renderer errors appear as red text on a pale red surface.
+
+The compact Background selector defaults to Solid and offers CS2 Dust II and Overpass plus VALORANT Ascent and Icebox. Scene images load from Valve and Riot Games image hosts; the credit link opens the publisher's game or map page. The status says "Loading background…" while an image loads, then "Background unavailable. Choose another background." if loading fails. The repository ships no scene rasters.
 
 ### Configuration
 
@@ -178,7 +186,9 @@ The configuration editor uses a monospace textarea. Apply, Copy, and Reset defau
 ### Do:
 
 - Do keep the live renderer and its controls immediately available.
-- Do keep the preview sticky above the settings editor on narrow screens.
+- Do keep the preview and editor inside the window-constrained grid.
+- Do keep the settings editor independently scrollable with sticky tabs on desktop and mobile.
+- Do default Background to Solid and credit publisher-hosted scenes.
 - Do preserve the four settings tabs and their current order.
 - Do use tabular numerals for FPS, frame time, and hit receipt values.
 - Do keep configuration text in a monospace field.

@@ -28,10 +28,12 @@ sound, score, and other game behavior.
 
 Settings must change the running Rust renderer. Display measured frame rate.
 Provide a usable desktop and mobile layout. Keep controls and the crosshair visible
-immediately. Keep technical design explanations in repository documentation.
+immediately. Fit the preview to the browser window and scroll settings independently.
+Offer game backgrounds for checking crosshair contrast. Keep technical design
+explanations in repository documentation.
 CS2 compatibility requires documented limits where actual-client evidence is absent.
 The requested performance target is at least 60 FPS on the verification device.
 
 ## Brand commitments
 
-The repository is `sagan-software/Bevy-Crosshair`. Preserve the existing icon asset.
+The repository is `sagan-software/bevy-crosshair`. Preserve the existing icon asset.
