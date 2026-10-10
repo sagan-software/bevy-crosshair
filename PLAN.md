@@ -100,15 +100,15 @@ from test coverage, benchmark timings, and browser frame rate.
 
 - [x] Public example and integration tests precede production behavior.
 - [x] Missing-API failure, signature compilation, and implementation stages recorded.
-- [ ] Current CS2 setting matrix maps every setting to behavior and tests.
-- [ ] Every accepted value has defined units and every rejected legacy setting is documented.
+- [x] Current CS2 setting matrix maps every setting to behavior and tests.
+- [x] Every accepted value has defined units and every rejected legacy setting is documented.
 - [x] Generic hit metadata reaches both marker rendering and independent observers.
 - [x] Replacement, expiry, despawn, disabled output, and target isolation are tested.
 - [x] `cargo fmt --all -- --check` passes.
 - [x] `cargo test` passes.
 - [x] `cargo clippy --all-targets --all-features -- -D warnings` passes.
 - [x] `RUSTDOCFLAGS='-D warnings' cargo doc --no-deps --document-private-items --all-features` passes.
-- [ ] `cargo test --doc --all-features` passes.
+- [x] `cargo test --doc --all-features` passes.
 - [x] `nix run .#dylint` runs all selected public Dylints without diagnostics.
 - [x] `nix run .#lint-probe` proves that a known violation fails and its fix passes.
 - [x] The applicable Liamc lint command finishes without candidate diagnostics.
@@ -118,10 +118,11 @@ from test coverage, benchmark timings, and browser frame rate.
 - [x] Instrumented benchmark execution covers 100% of production Rust lines.
 - [x] Allocation instrumentation verifies any zero-allocation claim.
 - [x] WebAssembly build uses Bevy 0.20 and the reusable plugin.
-- [ ] Desktop/mobile visual review and interaction checks pass.
-- [ ] The deployed playground has a recorded frame-rate sample and environment.
-- [ ] GitHub Pages serves the tested commit with working asset paths.
-- [ ] Commit author, committer, message, and trailers contain only user attribution.
+- [x] Desktop/mobile visual review and interaction checks pass.
+- [x] The deployed playground has a recorded frame-rate sample and environment.
+- [x] GitHub Pages serves the tested commit with working asset paths.
+- [x] Commit author, committer, message, and trailers contain only user attribution.
+- [ ] Actual CS2 captures establish exact visual parity. Reconstruction differences remain documented in `docs/cs2.md`.
 
 ## Verification record
 
@@ -134,7 +135,8 @@ was implemented. Intent comments preceded implementation. Public tests then pass
 a separate internal marker test was added after that external checkpoint.
 
 The public repository exists at <https://github.com/sagan-software/Bevy-Crosshair>.
-The local configured identity is Bill Curry. No project commit has been pushed.
+The implementation was pushed as `9467fdcefdb97177e6d1b661fd30f760591e3344`.
+Its author and committer are Bill Curry, using the configured Git identity.
 
 The template was inspected at `1f515985e4bd4cf63f0f52f92e3bb5b6353dbe13`.
 The selected current Dylints revision is
@@ -164,5 +166,9 @@ The initial T3 browser measurements were throttled and did not establish 60 FPS.
 A blank-page animation loop reached about 121 FPS. Bevy frame callbacks used about
 10.7 ms on average in one diagnostic sample while the preview delivered about
 8 frames per second. T3 continued reporting the panel hidden after the user opened
-it. The user authorized foreground Chrome verification. Deployment and that final
-measurement remain open until the published artifact is verified.
+it. The user authorized foreground Chrome verification. The published artifact
+then averaged 59.96–60.03 FPS across ten styles and three additional render modes
+on the 60 Hz verification display. The longest sampled frame was 26 ms. These
+measurements establish nominal 60 FPS on that device, not a strict lower bound
+for every interval or frame. See [the verification record](docs/verification.md)
+for the environment, raw samples, deployed artifact, and remaining limits.

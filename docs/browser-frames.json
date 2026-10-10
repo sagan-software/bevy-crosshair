@@ -1,0 +1,288 @@
+{
+  "url": "https://sagan-software.github.io/Bevy-Crosshair/",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+  "hidden": false,
+  "focused": true,
+  "viewport": [
+    1247,
+    660,
+    1
+  ],
+  "canvas": [
+    824,
+    464
+  ],
+  "gpu": "ANGLE (AMD, Vulkan 1.4.354 (AMD Custom GPU 0405 (RADV VANGOGH) (0x0000163F)), radv)",
+  "configurationLines": 43,
+  "hitReceipt": "Headshot \u00b7 83 damage \u00b7 1 events",
+  "error": "",
+  "modes": [
+    {
+      "name": "Dynamic cross",
+      "sampleCount": 2,
+      "meanFps": 59.958058717795105,
+      "minFps": 59.91611743559021,
+      "maxFrameMs": 18.5,
+      "samples": [
+        {
+          "time": 47378.40000003576,
+          "fps": 59.91611743559021,
+          "longestMs": 17.7
+        },
+        {
+          "time": 48378.60000002384,
+          "fps": 60,
+          "longestMs": 18.5
+        }
+      ]
+    },
+    {
+      "name": "Dynamic circle",
+      "sampleCount": 2,
+      "meanFps": 59.99100269919025,
+      "minFps": 59.9820053983805,
+      "maxFrameMs": 18,
+      "samples": [
+        {
+          "time": 51394.90000003576,
+          "fps": 60,
+          "longestMs": 18
+        },
+        {
+          "time": 52395,
+          "fps": 59.9820053983805,
+          "longestMs": 17.9
+        }
+      ]
+    },
+    {
+      "name": "Legacy dynamic cross",
+      "sampleCount": 2,
+      "meanFps": 59.96103266922022,
+      "minFps": 59.94005994005993,
+      "maxFrameMs": 18.4,
+      "samples": [
+        {
+          "time": 56428.10000002384,
+          "fps": 59.94005994005993,
+          "longestMs": 17.8
+        },
+        {
+          "time": 57428.60000002384,
+          "fps": 59.9820053983805,
+          "longestMs": 18.4
+        }
+      ]
+    },
+    {
+      "name": "Static circle",
+      "sampleCount": 2,
+      "meanFps": 59.989199828910245,
+      "minFps": 59.95675250638883,
+      "maxFrameMs": 18.1,
+      "samples": [
+        {
+          "time": 60478.60000002384,
+          "fps": 59.95675250638883,
+          "longestMs": 18
+        },
+        {
+          "time": 61494.90000003576,
+          "fps": 60.02164715143165,
+          "longestMs": 18.1
+        }
+      ]
+    },
+    {
+      "name": "Static cross",
+      "sampleCount": 3,
+      "meanFps": 59.99844461146773,
+      "minFps": 59.95203836930456,
+      "maxFrameMs": 17.8,
+      "samples": [
+        {
+          "time": 64528.5,
+          "fps": 60.015741833923656,
+          "longestMs": 17.8
+        },
+        {
+          "time": 65528.30000001192,
+          "fps": 59.95203836930456,
+          "longestMs": 17.7
+        },
+        {
+          "time": 66545.5,
+          "fps": 60.02755363117498,
+          "longestMs": 17.8
+        }
+      ]
+    },
+    {
+      "name": "Shot-feedback cross",
+      "sampleCount": 2,
+      "meanFps": 59.99878431183936,
+      "minFps": 59.97001499250375,
+      "maxFrameMs": 26,
+      "samples": [
+        {
+          "time": 69563.5,
+          "fps": 59.97001499250375,
+          "longestMs": 21
+        },
+        {
+          "time": 70579.20000004768,
+          "fps": 60.02755363117497,
+          "longestMs": 26
+        }
+      ]
+    },
+    {
+      "name": "Dot",
+      "sampleCount": 3,
+      "meanFps": 60.00410482064863,
+      "minFps": 59.89219405070875,
+      "maxFrameMs": 17.9,
+      "samples": [
+        {
+          "time": 73628.80000001192,
+          "fps": 60.05710347543566,
+          "longestMs": 17.8
+        },
+        {
+          "time": 74645.10000002384,
+          "fps": 60.06301693580149,
+          "longestMs": 17.8
+        },
+        {
+          "time": 75645.10000002384,
+          "fps": 59.89219405070875,
+          "longestMs": 17.9
+        }
+      ]
+    },
+    {
+      "name": "Dynamic quad",
+      "sampleCount": 2,
+      "meanFps": 59.97213102367335,
+      "minFps": 59.9580293794344,
+      "maxFrameMs": 17.8,
+      "samples": [
+        {
+          "time": 78662.20000004768,
+          "fps": 59.9580293794344,
+          "longestMs": 17.8
+        },
+        {
+          "time": 79679.10000002384,
+          "fps": 59.9862326679123,
+          "longestMs": 17.7
+        }
+      ]
+    },
+    {
+      "name": "Static square",
+      "sampleCount": 3,
+      "meanFps": 59.99650434909392,
+      "minFps": 59.958029379434414,
+      "maxFrameMs": 18,
+      "samples": [
+        {
+          "time": 82729.10000002384,
+          "fps": 60.015741833923656,
+          "longestMs": 18
+        },
+        {
+          "time": 83745.40000003576,
+          "fps": 60.01574183392367,
+          "longestMs": 17.9
+        },
+        {
+          "time": 84745.60000002384,
+          "fps": 59.958029379434414,
+          "longestMs": 17.6
+        }
+      ]
+    },
+    {
+      "name": "Static quad",
+      "sampleCount": 2,
+      "meanFps": 59.98112113203693,
+      "minFps": 59.97600959616155,
+      "maxFrameMs": 18,
+      "samples": [
+        {
+          "time": 87762.70000004768,
+          "fps": 59.97600959616155,
+          "longestMs": 18
+        },
+        {
+          "time": 88779.20000004768,
+          "fps": 59.98623266791231,
+          "longestMs": 17.8
+        }
+      ]
+    },
+    {
+      "name": "Sniper",
+      "sampleCount": 3,
+      "meanFps": 60.03018824964412,
+      "minFps": 59.999999999999986,
+      "maxFrameMs": 18.3,
+      "samples": [
+        {
+          "time": 91795.70000004768,
+          "fps": 59.999999999999986,
+          "longestMs": 17.6
+        },
+        {
+          "time": 92812,
+          "fps": 60.03346127349672,
+          "longestMs": 18.3
+        },
+        {
+          "time": 93829.30000001192,
+          "fps": 60.05710347543566,
+          "longestMs": 17.9
+        }
+      ]
+    },
+    {
+      "name": "Optical sight",
+      "sampleCount": 2,
+      "meanFps": 59.98500749625188,
+      "minFps": 59.97001499250378,
+      "maxFrameMs": 17.9,
+      "samples": [
+        {
+          "time": 96829.40000003576,
+          "fps": 59.999999999999986,
+          "longestMs": 17.7
+        },
+        {
+          "time": 97828.60000002384,
+          "fps": 59.97001499250378,
+          "longestMs": 17.9
+        }
+      ]
+    },
+    {
+      "name": "Flash grenade guide",
+      "sampleCount": 2,
+      "meanFps": 60.00688618127475,
+      "minFps": 60.00393468424159,
+      "maxFrameMs": 17.8,
+      "samples": [
+        {
+          "time": 100863.10000002384,
+          "fps": 60.00393468424159,
+          "longestMs": 17.8
+        },
+        {
+          "time": 101879.80000001192,
+          "fps": 60.00983767830791,
+          "longestMs": 17.8
+        }
+      ]
+    }
+  ]
+}

@@ -4,7 +4,8 @@ A Bevy 0.20 plugin for configurable crosshairs and typed hit feedback.
 
 [Playground](https://sagan-software.github.io/Bevy-Crosshair/) ·
 [Rust API](https://sagan-software.github.io/Bevy-Crosshair/api/bevy_crosshair/) ·
-[CS2 compatibility](docs/cs2.md) · [Implementation plan](PLAN.md)
+[CS2 compatibility](docs/cs2.md) · [Implementation plan](PLAN.md) ·
+[Verification](docs/verification.md)
 
 The playground runs the Rust plugin as WebAssembly. Change settings, supply weapon
 state, and fire hits with damage metadata. An independent event observer updates
@@ -79,11 +80,11 @@ crosshair is disabled.
 use bevy_crosshair::{Crosshair, Style};
 
 let mut crosshair: Crosshair =
-    "cl_crosshairstyle 4; cl_crosshair_length 12; cl_crosshairdot 1".parse()?;
-crosshair.set("cl_crosshaircolor_r", "255")?;
+    "cl_crosshairstyle 4; cl_crosshair_length 12; cl_crosshairdot 1"
+        .parse().expect("valid crosshair settings");
+crosshair.set("cl_crosshaircolor_r", "255").expect("valid color channel");
 assert_eq!(crosshair.style(), Style::StaticCross);
 let console_settings = crosshair.to_string();
-# Ok::<(), bevy_crosshair::SettingError>(())
 ```
 
 Parsing and individual updates validate before changing stored settings. Export

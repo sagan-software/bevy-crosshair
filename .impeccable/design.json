@@ -1,0 +1,382 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-10T02:43:28Z",
+  "title": "Design System: Bevy Crosshair",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Clear blue",
+        "canonical": "#175fc3",
+        "tonalRamp": [
+          "oklch(15% 0.057 258.4)",
+          "oklch(25% 0.094 258.4)",
+          "oklch(35% 0.132 258.4)",
+          "oklch(45% 0.170 258.4)",
+          "oklch(55% 0.171 258.4)",
+          "oklch(65% 0.171 258.4)",
+          "oklch(80% 0.101 258.4)",
+          "oklch(95% 0.024 258.4)"
+        ]
+      },
+      "primary-deep": {
+        "role": "primary",
+        "displayName": "Deep blue",
+        "canonical": "#114eaa",
+        "tonalRamp": [
+          "oklch(15% 0.060 259.5)",
+          "oklch(25% 0.099 259.5)",
+          "oklch(35% 0.139 259.5)",
+          "oklch(45% 0.160 259.5)",
+          "oklch(55% 0.160 259.5)",
+          "oklch(65% 0.160 259.5)",
+          "oklch(80% 0.101 259.5)",
+          "oklch(95% 0.024 259.5)"
+        ]
+      },
+      "focus": {
+        "role": "primary",
+        "displayName": "Focus blue",
+        "canonical": "#3880dd",
+        "tonalRamp": [
+          "oklch(15% 0.052 256.2)",
+          "oklch(25% 0.086 256.2)",
+          "oklch(35% 0.120 256.2)",
+          "oklch(45% 0.155 256.2)",
+          "oklch(55% 0.159 256.2)",
+          "oklch(65% 0.159 256.2)",
+          "oklch(80% 0.102 256.2)",
+          "oklch(95% 0.024 256.2)"
+        ]
+      },
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Canvas",
+        "canonical": "#e9eff5",
+        "tonalRamp": [
+          "oklch(15% 0.010 247.9)",
+          "oklch(25% 0.010 247.9)",
+          "oklch(35% 0.010 247.9)",
+          "oklch(45% 0.010 247.9)",
+          "oklch(55% 0.010 247.9)",
+          "oklch(65% 0.010 247.9)",
+          "oklch(80% 0.010 247.9)",
+          "oklch(95% 0.010 247.9)"
+        ]
+      },
+      "panel": {
+        "role": "neutral",
+        "displayName": "Editor panel",
+        "canonical": "#f5f8fb",
+        "tonalRamp": [
+          "oklch(15% 0.005 247.9)",
+          "oklch(25% 0.005 247.9)",
+          "oklch(35% 0.005 247.9)",
+          "oklch(45% 0.005 247.9)",
+          "oklch(55% 0.005 247.9)",
+          "oklch(65% 0.005 247.9)",
+          "oklch(80% 0.005 247.9)",
+          "oklch(95% 0.005 247.9)"
+        ]
+      },
+      "panel-selected": {
+        "role": "neutral",
+        "displayName": "Selected panel",
+        "canonical": "#e1ecf9",
+        "tonalRamp": [
+          "oklch(15% 0.021 252.5)",
+          "oklch(25% 0.021 252.5)",
+          "oklch(35% 0.021 252.5)",
+          "oklch(45% 0.021 252.5)",
+          "oklch(55% 0.021 252.5)",
+          "oklch(65% 0.021 252.5)",
+          "oklch(80% 0.021 252.5)",
+          "oklch(95% 0.021 252.5)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#182c41",
+        "tonalRamp": [
+          "oklch(15% 0.043 250.8)",
+          "oklch(25% 0.047 250.8)",
+          "oklch(35% 0.047 250.8)",
+          "oklch(45% 0.047 250.8)",
+          "oklch(55% 0.047 250.8)",
+          "oklch(65% 0.047 250.8)",
+          "oklch(80% 0.047 250.8)",
+          "oklch(95% 0.025 250.8)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted text",
+        "canonical": "#52667a",
+        "tonalRamp": [
+          "oklch(15% 0.040 248.6)",
+          "oklch(25% 0.040 248.6)",
+          "oklch(35% 0.040 248.6)",
+          "oklch(45% 0.040 248.6)",
+          "oklch(55% 0.040 248.6)",
+          "oklch(65% 0.040 248.6)",
+          "oklch(80% 0.040 248.6)",
+          "oklch(95% 0.025 248.6)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Layout line",
+        "canonical": "#c8d4e0",
+        "tonalRamp": [
+          "oklch(15% 0.021 248.1)",
+          "oklch(25% 0.021 248.1)",
+          "oklch(35% 0.021 248.1)",
+          "oklch(45% 0.021 248.1)",
+          "oklch(55% 0.021 248.1)",
+          "oklch(65% 0.021 248.1)",
+          "oklch(80% 0.021 248.1)",
+          "oklch(95% 0.021 248.1)"
+        ]
+      },
+      "control-border": {
+        "role": "neutral",
+        "displayName": "Control border",
+        "canonical": "#b3c2d1",
+        "tonalRamp": [
+          "oklch(15% 0.027 248.2)",
+          "oklch(25% 0.027 248.2)",
+          "oklch(35% 0.027 248.2)",
+          "oklch(45% 0.027 248.2)",
+          "oklch(55% 0.027 248.2)",
+          "oklch(65% 0.027 248.2)",
+          "oklch(80% 0.027 248.2)",
+          "oklch(95% 0.025 248.2)"
+        ]
+      },
+      "preview": {
+        "role": "neutral",
+        "displayName": "Preview slate",
+        "canonical": "#1a2633",
+        "tonalRamp": [
+          "oklch(15% 0.030 251.0)",
+          "oklch(25% 0.030 251.0)",
+          "oklch(35% 0.030 251.0)",
+          "oklch(45% 0.030 251.0)",
+          "oklch(55% 0.030 251.0)",
+          "oklch(65% 0.030 251.0)",
+          "oklch(80% 0.030 251.0)",
+          "oklch(95% 0.025 251.0)"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Control surface",
+        "canonical": "white",
+        "tonalRamp": [
+          "oklch(15% 0.000 89.9)",
+          "oklch(25% 0.000 89.9)",
+          "oklch(35% 0.000 89.9)",
+          "oklch(45% 0.000 89.9)",
+          "oklch(55% 0.000 89.9)",
+          "oklch(65% 0.000 89.9)",
+          "oklch(80% 0.000 89.9)",
+          "oklch(95% 0.000 89.9)"
+        ]
+      },
+      "button-surface": {
+        "role": "neutral",
+        "displayName": "Neutral button surface",
+        "canonical": "#f8fafc",
+        "tonalRamp": [
+          "oklch(15% 0.003 247.9)",
+          "oklch(25% 0.003 247.9)",
+          "oklch(35% 0.003 247.9)",
+          "oklch(45% 0.003 247.9)",
+          "oklch(55% 0.003 247.9)",
+          "oklch(65% 0.003 247.9)",
+          "oklch(80% 0.003 247.9)",
+          "oklch(95% 0.003 247.9)"
+        ]
+      },
+      "button-hover": {
+        "role": "neutral",
+        "displayName": "Button hover",
+        "canonical": "#dae6f3",
+        "tonalRamp": [
+          "oklch(15% 0.022 250.2)",
+          "oklch(25% 0.022 250.2)",
+          "oklch(35% 0.022 250.2)",
+          "oklch(45% 0.022 250.2)",
+          "oklch(55% 0.022 250.2)",
+          "oklch(65% 0.022 250.2)",
+          "oklch(80% 0.022 250.2)",
+          "oklch(95% 0.022 250.2)"
+        ]
+      },
+      "error": {
+        "role": "error",
+        "displayName": "Error text",
+        "canonical": "#91282d",
+        "tonalRamp": [
+          "oklch(15% 0.060 22.5)",
+          "oklch(25% 0.101 22.5)",
+          "oklch(35% 0.140 22.5)",
+          "oklch(45% 0.140 22.5)",
+          "oklch(55% 0.140 22.5)",
+          "oklch(65% 0.140 22.5)",
+          "oklch(80% 0.114 22.5)",
+          "oklch(95% 0.025 22.5)"
+        ]
+      },
+      "error-surface": {
+        "role": "error",
+        "displayName": "Error surface",
+        "canonical": "#fde7e6",
+        "tonalRamp": [
+          "oklch(15% 0.024 20.7)",
+          "oklch(25% 0.024 20.7)",
+          "oklch(35% 0.024 20.7)",
+          "oklch(45% 0.024 20.7)",
+          "oklch(55% 0.024 20.7)",
+          "oklch(65% 0.024 20.7)",
+          "oklch(80% 0.024 20.7)",
+          "oklch(95% 0.024 20.7)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "title": {
+        "displayName": "Title",
+        "purpose": "Compact application heading; reduced on narrow screens."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Default interface text and field labels."
+      },
+      "navigation": {
+        "displayName": "Navigation",
+        "purpose": "Header links."
+      },
+      "measurement": {
+        "displayName": "Measurement",
+        "purpose": "Compact FPS and frame-time values."
+      },
+      "configuration": {
+        "displayName": "Configuration",
+        "purpose": "Monospace console settings text."
+      }
+    },
+    "shadows": [
+      {
+        "name": "tab-indicator",
+        "value": "inset 0 -2px #175fc3",
+        "purpose": "Marks the selected settings tab without lifting its surface."
+      }
+    ],
+    "motion": [
+      {
+        "name": "button-hover",
+        "value": "background-color 100ms ease-out",
+        "purpose": "Button fill transitions when reduced motion is not requested."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "mobile",
+        "value": "760px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary action button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Primary Fire action below the live preview.",
+      "html": "<button class=\"ds-primary-button\" type=\"button\">Fire</button>",
+      "css": ".ds-primary-button { font: inherit; min-height: 36px; padding: 8px 28px; border: 1px solid var(--accent); border-radius: 5px; background: var(--accent); color: white; cursor: pointer; } .ds-primary-button:hover { border-color: #114eaa; background: #114eaa; } .ds-primary-button:disabled { opacity: .5; cursor: wait; } .ds-primary-button:focus-visible { outline: 3px solid #3880dd; outline-offset: 3px; } @media (max-width: 760px) { .ds-primary-button { min-height: 42px; } } @media (prefers-reduced-motion: no-preference) { .ds-primary-button { transition: background-color 100ms ease-out; } }"
+    },
+    {
+      "name": "Neutral button",
+      "kind": "button",
+      "refersTo": "button-neutral",
+      "description": "Secondary action used for settings and configuration controls.",
+      "html": "<button class=\"ds-neutral-button\" type=\"button\">Reset defaults</button>",
+      "css": ".ds-neutral-button { font: inherit; min-height: 36px; padding: 8px 12px; border: 1px solid #b3c2d1; border-radius: 5px; background: #f8fafc; color: #182c41; cursor: pointer; } .ds-neutral-button:hover { background: #dae6f3; } .ds-neutral-button:disabled { opacity: .5; cursor: wait; } .ds-neutral-button:focus-visible { outline: 3px solid #3880dd; outline-offset: 3px; } @media (max-width: 760px) { .ds-neutral-button { min-height: 42px; } } @media (prefers-reduced-motion: no-preference) { .ds-neutral-button { transition: background-color 100ms ease-out; } }"
+    },
+    {
+      "name": "Settings tabs",
+      "kind": "nav",
+      "refersTo": "settings-tab",
+      "description": "Four equal-width category tabs; selected state marks the open panel.",
+      "html": "<div class=\"ds-tabs\" role=\"tablist\"><button class=\"ds-tab ds-tab-selected\" role=\"tab\" aria-selected=\"true\">Crosshair</button><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\">Hits</button><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\">Simulation</button><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\">Config</button></div>",
+      "css": ".ds-tabs { position: sticky; top: 0; z-index: 1; display: grid; grid-template-columns: repeat(4, 1fr); padding: 8px 8px 0; border-bottom: 1px solid var(--line); background: #f5f8fb; } .ds-tab { min-width: 0; padding: 12px 5px; border: 0; border-radius: 4px 4px 0 0; background: transparent; color: var(--muted); font: inherit; font-size: 12px; } .ds-tab:hover { color: var(--accent); } .ds-tab:focus-visible { outline: 3px solid #3880dd; outline-offset: 3px; } .ds-tab-selected, .ds-tab-selected:hover { background: #e1ecf9; color: #114eaa; box-shadow: inset 0 -2px var(--accent); } @media (max-width: 760px) { .ds-tabs { position: static; } }"
+    },
+    {
+      "name": "Header navigation",
+      "kind": "nav",
+      "description": "Quiet links to the Rust API and source repository.",
+      "html": "<nav class=\"ds-header-nav\" aria-label=\"Project\"><a href=\"#api\">Rust API</a><a href=\"#source\">GitHub</a></nav>",
+      "css": ".ds-header-nav { display: flex; gap: 24px; } .ds-header-nav a { color: #314b64; font: inherit; font-size: 13px; text-underline-offset: 3px; } .ds-header-nav a:focus-visible { outline: 3px solid #3880dd; outline-offset: 3px; }"
+    },
+    {
+      "name": "Select field",
+      "kind": "input",
+      "refersTo": "select",
+      "description": "Full-width style selector within a settings row.",
+      "html": "<label class=\"ds-select-label\" for=\"ds-style\">Style</label><select class=\"ds-select\" id=\"ds-style\"><option>Dynamic cross</option><option>Static cross</option></select>",
+      "css": ".ds-select-label { display: block; margin-bottom: 8px; color: #182c41; font: inherit; } .ds-select { width: 100%; min-width: 0; padding: 8px; border: 1px solid #b3c2d1; border-radius: 4px; background: white; color: #182c41; font: inherit; accent-color: var(--accent); } .ds-select:focus-visible { outline: 3px solid #3880dd; outline-offset: 3px; }"
+    },
+    {
+      "name": "Range field",
+      "kind": "custom",
+      "description": "Label and value sit above a full-width native slider.",
+      "html": "<div class=\"ds-range-field\"><label for=\"ds-length\">Length</label><output for=\"ds-length\">8</output><input id=\"ds-length\" type=\"range\" min=\"0\" max=\"255\" value=\"8\"></div>",
+      "css": ".ds-range-field { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px 14px; margin-bottom: 20px; color: #182c41; } .ds-range-field output { color: #39556f; font-size: 12px; font-variant-numeric: tabular-nums; } .ds-range-field input { grid-column: 1 / -1; width: 100%; margin: 0; accent-color: var(--accent); } .ds-range-field label, .ds-range-field input { font: inherit; }"
+    },
+    {
+      "name": "Hit sound toggle",
+      "kind": "input",
+      "description": "Native checkbox with a compact label row.",
+      "html": "<label class=\"ds-check\"><input type=\"checkbox\"><span>Hit sound</span></label>",
+      "css": ".ds-check { display: flex; align-items: center; gap: 8px; color: #182c41; font: inherit; } .ds-check input { width: 16px; height: 16px; margin: 0; accent-color: var(--accent); } .ds-check input:focus-visible { outline: 3px solid #3880dd; outline-offset: 3px; }"
+    },
+    {
+      "name": "Configuration field",
+      "kind": "input",
+      "description": "Monospace console settings editor with vertical resizing.",
+      "html": "<label class=\"ds-config-label\" for=\"ds-config\">CS2 console settings</label><textarea class=\"ds-config\" id=\"ds-config\" rows=\"6\"></textarea>",
+      "css": ".ds-config-label { display: block; color: #182c41; font: inherit; } .ds-config { width: 100%; margin-top: 10px; padding: 10px; resize: vertical; border: 1px solid #b3c2d1; border-radius: 4px; background: white; color: #233f5a; font-family: ui-monospace, monospace; font-size: 11px; line-height: 1.65; } .ds-config:focus-visible { outline: 3px solid #3880dd; outline-offset: 3px; }"
+    },
+    {
+      "name": "Live preview",
+      "kind": "custom",
+      "description": "Renderer surface remains above the editor and sticks on mobile.",
+      "html": "<section class=\"ds-preview\"><div class=\"ds-preview-bar\"><span>Dynamic quad</span><output>Starting</output></div><div class=\"ds-viewport\"></div></section>",
+      "css": ".ds-preview { display: flex; min-width: 0; flex-direction: column; padding: 24px; background: #e9eff5; } .ds-preview-bar { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 12px; } .ds-preview-bar output { font-variant-numeric: tabular-nums; } .ds-viewport { min-height: 250px; flex: 1; overflow: hidden; border-radius: 6px; background: #1a2633; } @media (max-width: 760px) { .ds-preview { position: sticky; top: 0; z-index: 3; padding: 12px 16px; } .ds-viewport { height: 30dvh; min-height: 150px; flex: none; } }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Crosshair settings editor",
+    "overview": "Crosshair settings stay beside their renderer. A dark preview, pale editor, and nearby measured feedback keep adjustment and observation together.",
+    "keyCharacteristics": [
+      "Pale blue-gray application surfaces frame a dark slate renderer.",
+      "Blue marks interactive and selected states.",
+      "System sans text carries the interface; configuration text uses monospace.",
+      "The settings editor groups four categories behind tabs."
+    ],
+    "rules": [],
+    "dos": [
+      "Do keep the live renderer and its controls immediately available.",
+      "Do keep the preview sticky above the settings editor on narrow screens.",
+      "Do preserve the four settings tabs and their current order.",
+      "Do use tabular numerals for FPS, frame time, and hit receipt values.",
+      "Do keep configuration text in a monospace field."
+    ],
+    "donts": [
+      "Don't use the configurable crosshair color as the editor's interaction accent.",
+      "Don't fix the rendered crosshair to the editor's blue palette."
+    ]
+  }
+}
