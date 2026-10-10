@@ -32,3 +32,5 @@ pub(crate) use self::rendering::run as rendering;
 
 mod reflection;
 pub(crate) use self::reflection::run as reflection;
+mod extensions;
+pub(crate) use self::extensions::run as extensions;

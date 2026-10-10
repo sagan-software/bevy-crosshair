@@ -1,5 +1,6 @@
 //! Shared native and WebAssembly application.
 
+use super::motion::FiringMotion;
 use bevy::prelude::*;
 use bevy::window::PresentMode;
 use bevy::window::WindowResizeConstraints;
@@ -9,7 +10,8 @@ use bevy_crosshair::CrosshairPlugin;
 use bevy_crosshair::Hit;
 use bevy_crosshair::HitFeedback;
 use bevy_crosshair::HitMarker;
-use bevy_crosshair::Style;
+use bevy_crosshair::MarkerAnimation;
+use bevy_crosshair::MarkerShape;
 use std::time::Duration;
 
 /// Damage kind supplied by the game, independent of the plugin.
@@ -36,6 +38,10 @@ pub(super) struct Damage {
     pub scale: f32,
     /// Whether damage changes marker size.
     pub is_damage_scaled: bool,
+    /// Marker geometry chosen by the game.
+    pub shape: MarkerShape,
+    /// Marker motion chosen independently of hit classification.
+    pub animation: MarkerAnimation,
 }
 
 impl Default for Damage {
@@ -46,6 +52,8 @@ impl Default for Damage {
             duration: Duration::from_millis(250),
             scale: 1.0,
             is_damage_scaled: true,
+            shape: MarkerShape::default(),
+            animation: MarkerAnimation::default(),
         }
     }
 }
@@ -64,6 +72,8 @@ impl HitFeedback for Damage {
             1.0
         };
         HitMarker::default()
+            .with_shape(self.shape)
+            .with_animation(self.animation)
             .with_color(color)
             .with_duration(self.duration)
             .scaled(self.scale * factor)
@@ -80,6 +90,10 @@ struct Frames {
     /// Longest frame in the interval, in seconds.
     longest: f64,
 }
+
+/// The editable crosshair, distinguished from gallery entries.
+#[derive(Component, Clone, Copy, Default, Reflect)]
+pub(super) struct Preview;
 
 /// Builds the shared Bevy application.
 pub(super) fn run() {
@@ -110,22 +124,28 @@ pub(super) fn run() {
     .add_plugins(CrosshairPlugin::<Damage>::default())
     .init_resource::<Frames>()
     .add_systems(Startup, setup)
-    .add_systems(PreUpdate, (resize, controls).chain())
+    .add_systems(PreUpdate, (resize, controls, firing).chain())
     .add_systems(Last, measure)
     .add_observer(receipt);
     #[cfg(target_arch = "wasm32")]
-    app.add_systems(PreUpdate, super::browser::synchronize.after(resize));
+    app.add_systems(
+        PreUpdate,
+        super::browser::synchronize.after(resize).before(firing),
+    );
     app.run();
 }
 
 /// A normal camera and Crosshair component are enough to enable the renderer.
 fn setup(mut commands: Commands<'_, '_>) {
     commands.spawn(Camera2d);
-    commands.spawn(Crosshair::default());
+    commands.spawn((Crosshair::default(), Preview, FiringMotion::default()));
 }
 
 /// Supplies the current physical viewport to the renderer.
-fn resize(windows: Query<'_, '_, &Window>, mut crosshairs: Query<'_, '_, &mut CrosshairInput>) {
+fn resize(
+    windows: Query<'_, '_, &Window>,
+    mut crosshairs: Query<'_, '_, &mut CrosshairInput, With<Preview>>,
+) {
     if let Ok(window) = windows.single() {
         let viewport = Vec2::new(
             window.physical_width() as f32,
@@ -142,22 +162,36 @@ fn resize(windows: Query<'_, '_, &Window>, mut crosshairs: Query<'_, '_, &mut Cr
 /// Native keyboard controls mirror the browser's style and hit actions.
 fn controls(
     keys: Res<'_, ButtonInput<KeyCode>>,
-    mut crosshairs: Query<'_, '_, (Entity, &mut Crosshair, &mut CrosshairInput)>,
+    mut crosshairs: Query<
+        '_,
+        '_,
+        (
+            Entity,
+            &mut Crosshair,
+            &mut CrosshairInput,
+            &mut FiringMotion,
+        ),
+        With<Preview>,
+    >,
     mut commands: Commands<'_, '_>,
 ) {
     // Keyboard modifiers select game metadata before the event is dispatched.
     let kind = keyboard_kind(&keys);
-    for (entity, mut crosshair, mut input) in &mut crosshairs {
+    for (entity, mut crosshair, mut input, mut motion) in &mut crosshairs {
+        // Browser controls own keyboard focus and firing; Space can activate its focused button.
+        #[cfg(not(target_arch = "wasm32"))]
         if keys.just_pressed(KeyCode::Space) {
+            motion.fire();
             commands.trigger(Hit {
                 entity,
                 metadata: Damage { kind, ..default() },
             });
         }
         // Cycling uses the published contiguous style identifiers.
+        #[cfg(not(target_arch = "wasm32"))]
         if keys.just_pressed(KeyCode::ArrowRight) {
             let next = (crosshair.style() as u8 + 1) % 10;
-            if let Ok(style) = Style::try_from(next) {
+            if let Ok(style) = bevy_crosshair::Style::try_from(next) {
                 *crosshair = crosshair.clone().with_style(style);
             }
         }
@@ -168,17 +202,32 @@ fn controls(
             0.0
         };
         #[cfg(not(target_arch = "wasm32"))]
-        if input.spread.to_bits() != spread.to_bits() {
+        {
             input.spread = spread;
+            input.shot = 0.0;
+            input.recoil = Vec2::ZERO;
+            motion.accept(&input);
         }
         #[cfg(target_arch = "wasm32")]
-        let _ = (&mut input, spread);
+        let _ = (
+            &mut input,
+            spread,
+            entity,
+            &mut crosshair,
+            &mut motion,
+            &mut commands,
+            kind,
+        );
     }
 }
 
 /// Reports measured Bevy updates instead of a separate JavaScript animation
 /// loop.
-fn measure(time: Res<'_, Time<Real>>, mut frames: ResMut<'_, Frames>) {
+fn measure(
+    time: Res<'_, Time<Real>>,
+    mut frames: ResMut<'_, Frames>,
+    crosshairs: Query<'_, '_, Option<&Visibility>, With<Crosshair>>,
+) {
     // Real time includes stalled frames; virtual time would clamp long delays.
     let seconds = time.delta_secs_f64();
     frames.count += 1;
@@ -189,10 +238,31 @@ fn measure(time: Res<'_, Time<Real>>, mut frames: ResMut<'_, Frames>) {
         let fps = f64::from(frames.count) / frames.seconds;
         let longest_ms = frames.longest * 1000.0;
         #[cfg(target_arch = "wasm32")]
-        super::browser::frame(fps, longest_ms);
+        super::browser::frame(
+            fps,
+            longest_ms,
+            crosshairs
+                .iter()
+                .filter(|visibility| !matches!(visibility, Some(Visibility::Hidden)))
+                .count(),
+        );
         #[cfg(not(target_arch = "wasm32"))]
-        info!(fps, longest_ms, "Frame interval");
+        {
+            let _ = &crosshairs;
+            info!(fps, longest_ms, "Frame interval");
+        }
+        // No elapsed time or maximum-frame value may leak into the next interval.
         *frames = Frames::default();
+    }
+}
+
+/// Applies host weapon motion before the plugin derives its current geometry.
+fn firing(
+    time: Res<'_, Time>,
+    mut crosshairs: Query<'_, '_, (&mut FiringMotion, &mut CrosshairInput)>,
+) {
+    for (mut motion, mut input) in &mut crosshairs {
+        motion.advance(time.delta(), &mut input);
     }
 }
 

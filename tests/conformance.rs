@@ -53,3 +53,8 @@ use stats_alloc as _;
 fn reflection() {
     support::reflection();
 }
+
+#[test]
+fn extensions() {
+    support::extensions();
+}

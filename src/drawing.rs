@@ -9,11 +9,26 @@ use bevy::prelude::*;
 /// intermediate mesh.
 #[derive(Clone, Debug, Default)]
 pub struct Drawing {
-    /// At most 48 primitives are emitted by the complete configuration matrix.
+    /// Fixed capacity bounds stack storage for every supported rendering mode.
     pub(crate) primitives: ArrayVec<Primitive, 64>,
 }
 
 impl Drawing {
+    /// Represents a solid disk through the ring primitive, without a center hole.
+    pub(crate) fn disk(&mut self, center: Vec2, radius: f32, color: LinearRgba) {
+        if radius > 0.0 && color.alpha > 0.0 {
+            self.primitives.push(Primitive::Ring {
+                center,
+                radius,
+                // Twice the radius puts the inner edge outside the disk, including its center.
+                thickness: radius * 2.0,
+                fraction: 1.0,
+                is_top_omitted: false,
+                color,
+            });
+        }
+    }
+
     /// Omits empty rectangles before they reach the GPU.
     pub(crate) fn rectangle(&mut self, center: Vec2, size: Vec2, rotation: f32, color: LinearRgba) {
         if size.min_element() > 0.0 && color.alpha > 0.0 {

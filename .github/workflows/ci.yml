@@ -23,6 +23,13 @@ jobs:
           chmod 700 "$XDG_RUNTIME_DIR"
       - run: cargo fmt --all -- --check
       - run: cargo test
+      - run: cargo test --example playground --features playground
+      - name: Check playground scripts
+        run: |
+          node --check web/app.js
+          node --check scripts/check_feedback.js
+          node --check scripts/check_playground.js
+          node --test scripts/presets.test.mjs
       - run: cargo clippy --all-targets --all-features -- -D warnings
       - name: Build API documentation
         env:

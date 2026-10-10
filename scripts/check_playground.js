@@ -21,7 +21,8 @@
   editor.scrollTop = previousScroll;
 
   const selector = byId('background');
-  check(selector?.options.length === 5, 'Four game scenes and a solid background must be available');
+  check(selector?.options.length === 11, 'Ten game scenes and a solid background must be available');
+  for (const game of ['et-', 'db-']) check([...selector.options].filter(option => option.value.startsWith(game)).length >= 3, `${game} requires at least three distinct maps`);
   if (selector) {
     const originalImage = window.Image;
     const previousSelection = selector.value;

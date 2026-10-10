@@ -9,6 +9,8 @@ mod app;
 #[cfg(target_arch = "wasm32")]
 #[path = "playground/browser.rs"]
 mod browser;
+#[path = "playground/motion.rs"]
+mod motion;
 
 /// Starts Bevy with only the rendering capabilities selected in Cargo.toml.
 fn main() {

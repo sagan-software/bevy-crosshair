@@ -45,7 +45,12 @@ typography:
     fontSize: "11px"
     fontWeight: 400
     lineHeight: 1.65
+  gallery-badge:
+    fontFamily: "ui-sans-serif, system-ui, sans-serif"
+    fontSize: "10px"
+    fontWeight: 400
 rounded:
+  xs: "2px"
   sm: "4px"
   md: "5px"
   lg: "6px"
@@ -82,6 +87,11 @@ components:
     textColor: "{colors.ink}"
     rounded: "{rounded.sm}"
     padding: "8px"
+  gallery-badge:
+    backgroundColor: "{colors.preview}"
+    textColor: "{colors.surface}"
+    rounded: "{rounded.xs}"
+    padding: "1px 4px"
 ---
 
 # Design System: bevy-crosshair
@@ -90,39 +100,41 @@ components:
 
 Design focus: Crosshair settings editor.
 
-Crosshair settings stay beside their renderer. The dark preview can use a solid field or a publisher-hosted map scene. The pale editor and nearby measurements keep changes and feedback in view.
+Crosshair settings stay beside their renderer. The dark preview can use a solid field or one of ten externally hosted scenes. A gallery that fills the preview pane compares 100 crosshairs rendered by Bevy. The pale editor and nearby measurements keep changes and feedback in view.
 
 Key characteristics:
 
 - Pale blue-gray application surfaces frame a dark slate renderer.
-- Blue marks interactive and selected states.
+- Blue marks editor interactions; white outlines mark gallery selection and keyboard focus.
 - System sans text carries the interface; configuration text uses monospace.
 - The settings editor groups four categories behind tabs.
-- The preview can show publisher-hosted map scenes with a linked credit.
+- The preview offers ten externally hosted scenes with a linked credit.
+- The gallery compares 100 crosshairs rendered by Bevy against the selected scene.
 
 ## Colors
 
-Pale blue-gray surfaces, dark ink, and one blue interaction family frame the renderer and its user-controlled crosshair.
+Pale blue-gray surfaces, dark ink, and blue editor controls frame the renderer; white outlines mark gallery states against the dark preview.
 
 ### Primary
 
 - Clear blue is used for links, primary actions, range controls, and active-tab indicators.
 - Deep blue is used for the primary action's hover state and selected-tab text.
-- Focus blue marks keyboard focus with an offset outline.
+- Focus blue marks keyboard focus in the editor with an offset outline.
 
 ### Neutral
 
 - Canvas and panel separate the page background from the settings editor.
 - Ink and muted text carry labels, values, and supporting status.
 - Lines and control borders separate the editor and preview from their surroundings and outline form controls.
-- Preview slate gives the rendered crosshair a dark field.
+- Preview slate gives the rendered crosshair a dark field and the gallery index badges a dark backing.
+- White provides primary-action text and gallery selection and focus outlines.
 - Selected panel gives the active settings tab a pale blue fill.
 
 ### Feedback
 
 - Error red on pale red is reserved for the renderer error message.
 
-Blue identifies interaction and selection in the editor. The configurable crosshair color remains renderer content.
+Blue identifies editor interaction. The crosshair color and fill color come from user settings and affect the renderer.
 
 ## Typography
 
@@ -136,6 +148,7 @@ The interface uses one system sans family. The configuration editor switches to 
 - Measurement: Compact values for FPS and frame time; the FPS value is emphasized.
 - Background selector: Native select text uses 16px at widths up to 760px.
 - Configuration: Monospace text with generous line spacing for console settings.
+- Gallery badge: Tabular preset numbers sit over each rendered crosshair.
 
 Keep FPS, frame time, and hit receipt values tabular so changing digits do not shift their alignment.
 
@@ -143,7 +156,9 @@ Keep FPS, frame time, and hit receipt values tabular so changing digits do not s
 
 The page body fills the viewport at 100dvh and keeps the header above a height-constrained main grid. The desktop header is 68px tall. The main area is capped at 1800px and divides into a flexible preview with a 360px settings editor. The preview pane uses the larger page spacing token for its padding. The canvas is absolutely positioned at 100% width and height inside the viewport so its drawing buffer cannot grow the grid row.
 
-At widths up to 760px, the 56px header sits above two equal `minmax(0, 1fr)` rows. The preview fills the first row and the editor fills the second. The editor scrolls independently, and its tabs stay sticky at the top on desktop and mobile. At heights up to 500px and widths from 600px, the layout returns to two columns with a 320px editor and a 48px header.
+At widths up to 760px, the 56px header sits above preview and editor rows in a 3:2 height ratio. The preview fills the first row and the editor fills the second. The editor scrolls independently, and its tabs stay sticky at the top on desktop and mobile. At heights up to 500px and widths from 600px, short landscape mode uses two columns with a 320px editor and a 48px header.
+
+Gallery mode fills the preview pane and hides the editor and preview actions. Its grid shows 100 crosshairs rendered by Bevy in ten desktop columns or five mobile columns. The gallery viewport scrolls internally around a render stage with a 600px minimum height on desktop and a 1200px minimum height at widths up to 760px.
 
 The spacing rhythm comes from the compact steps in the frontmatter. The page uses a wider desktop gutter and tighter mobile preview padding. The background selector uses 16px text on mobile.
 
@@ -155,7 +170,7 @@ The page separates the renderer, editor, and outer canvas through tonal contrast
 
 ## Shapes
 
-Buttons use softly rounded corners. Selects and form fields use tighter corners, while the renderer viewport uses the broadest radius. Thin borders define the editor edge and field boundaries.
+Buttons use softly rounded corners. Selects and form fields use tighter corners, while the renderer viewport uses the broadest radius. Gallery cells keep square corners, and their number badges use the smallest rounded step. Thin borders define the editor edge and field boundaries.
 
 ## Components
 
@@ -165,7 +180,9 @@ The primary Fire button uses the blue accent and white text. Neutral controls us
 
 ### Inputs and fields
 
-Range rows place the label and value above a full-width slider. Selects span the row. Checkboxes keep their native control shape with the blue accent. Color inputs show a compact swatch. Advanced settings use disclosure rows separated by top borders.
+Range rows place the label and value above a full-width slider. Selects span the row. Checkboxes keep their native control shape with the blue accent. Color inputs show a compact swatch. Crosshair fill has separate color and opacity controls independent of the arms and center dot; the center dot supports square or circle shapes. Advanced settings use disclosure rows separated by top borders.
+
+The Crosshair tab uses contextual help and preview actions for split arms, sniper and optical sights, grenade guides, friendly warnings, and spectator views. These remain native selects, ranges, checkboxes, color inputs, and buttons.
 
 ### Navigation
 
@@ -173,9 +190,11 @@ The header links remain understated. Four equal settings tabs keep the order Cro
 
 ### Preview and feedback
 
-The preview bar pairs the current crosshair style with live FPS and maximum frame time. Fire and hit-sound controls sit below the renderer with the event receipt aligned to the opposite edge. Renderer errors appear as red text on a pale red surface.
+The preview bar pairs the current crosshair style with live FPS and maximum frame time. Fire and hit-sound controls sit below the renderer with the event receipt aligned to the opposite edge. Renderer errors appear as red text on a pale red surface. The Hits tab offers five marker shapes, four animations, Replay marker, and Repeat preview.
 
-The compact Background selector defaults to Solid and offers CS2 Dust II and Overpass plus VALORANT Ascent and Icebox. Scene images load from Valve and Riot Games image hosts; the credit link opens the publisher's game or map page. The status says "Loading background…" while an image loads, then "Background unavailable. Choose another background." if loading fails. The repository ships no scene rasters.
+The Background selector defaults to Solid and offers ten externally hosted scenes. The selected scene shows a source credit; the web page brief lists each credit link. The status says "Loading background…" while an image loads, then "Background unavailable. Choose another background." if loading fails. The repository ships no scene rasters.
+
+Gallery mode overlays one selection button on each rendered crosshair. A white border marks the selected button, and a white outline marks keyboard focus. A dark badge identifies each preset without covering the crosshair.
 
 ### Configuration
 
@@ -188,12 +207,15 @@ The configuration editor uses a monospace textarea. Apply, Copy, and Reset defau
 - Do keep the live renderer and its controls immediately available.
 - Do keep the preview and editor inside the window-constrained grid.
 - Do keep the settings editor independently scrollable with sticky tabs on desktop and mobile.
-- Do default Background to Solid and credit publisher-hosted scenes.
+- Do preserve the 3:2 mobile preview/editor split and the two-column layout for short landscape windows.
+- Do keep 100 rendered crosshairs in the gallery, with ten desktop columns and five mobile columns.
+- Do use white borders and focus outlines for gallery selection over the dark renderer.
+- Do default Background to Solid, show its selected source credit, and keep scene images external.
 - Do preserve the four settings tabs and their current order.
 - Do use tabular numerals for FPS, frame time, and hit receipt values.
 - Do keep configuration text in a monospace field.
 
 ### Don't:
 
-- Don't use the configurable crosshair color as the editor's interaction accent.
+- Don't use the configurable crosshair or fill color as the editor's interaction accent.
 - Don't fix the rendered crosshair to the editor's blue palette.

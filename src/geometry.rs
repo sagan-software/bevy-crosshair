@@ -16,41 +16,38 @@ use bevy::prelude::*;
 
 /// Chooses the observed configuration before deriving geometry.
 pub(crate) fn draw(drawing: &mut Drawing, crosshair: &Crosshair, input: &CrosshairInput) {
-    let settings = &crosshair.settings;
     // The fallback remains on the stack and is borrowed only for default-bot policy.
-    let fallback = Settings::default();
-    let selected = select_settings(settings, input, &fallback);
-    if selected.is_enabled {
+    let fallback = Crosshair::default();
+    let selected = select_crosshair(crosshair, input, &fallback);
+    if selected.settings.is_enabled {
         draw_selected(drawing, selected, input);
     }
 }
 
 /// Borrows the permitted player's settings without copying its configuration.
-fn select_settings<'a>(
-    settings: &'a Settings,
+fn select_crosshair<'a>(
+    crosshair: &'a Crosshair,
     input: &'a CrosshairInput,
-    fallback: &'a Settings,
-) -> &'a Settings {
+    fallback: &'a Crosshair,
+) -> &'a Crosshair {
+    let settings = &crosshair.settings;
     // Spectator relationship controls whether supplied player settings are trusted for display.
     match &input.spectator {
-        Spectator::Friend(observed) if settings.observer != ObserverPolicy::Off => {
-            &observed.settings
-        }
-        Spectator::Player(observed) if settings.observer == ObserverPolicy::Everyone => {
-            &observed.settings
-        }
+        Spectator::Friend(observed) if settings.observer != ObserverPolicy::Off => observed,
+        Spectator::Player(observed) if settings.observer == ObserverPolicy::Everyone => observed,
         Spectator::AvailableBot if settings.bot == BotPolicy::Default => fallback,
         Spectator::UnavailableBot if settings.bot != BotPolicy::Own => fallback,
         Spectator::Local
         | Spectator::Friend(_)
         | Spectator::Player(_)
         | Spectator::AvailableBot
-        | Spectator::UnavailableBot => settings,
+        | Spectator::UnavailableBot => crosshair,
     }
 }
 
 /// Resolves scope and grenade visibility before drawing ordinary geometry.
-fn draw_selected(drawing: &mut Drawing, settings: &Settings, input: &CrosshairInput) {
+fn draw_selected(drawing: &mut Drawing, crosshair: &Crosshair, input: &CrosshairInput) {
+    let settings = &crosshair.settings;
     // Scoped presentation replaces ordinary geometry before grenade policy is evaluated.
     if is_scoped(input.weapon, settings) {
         draw_scope(drawing, settings, input);
@@ -73,7 +70,7 @@ fn draw_selected(drawing: &mut Drawing, settings: &Settings, input: &CrosshairIn
     };
     // The retention flag affects ordinary geometry only after the grenade delay expires.
     if !has_grenade_guide || settings.is_crosshair_kept {
-        draw_shape(drawing, settings, input);
+        draw_shape(drawing, crosshair, input);
     }
     if has_grenade_guide {
         draw_grenade(drawing, settings, input);
@@ -223,14 +220,35 @@ impl<'a> Shape<'a> {
 }
 
 /// Dispatches each closed style to the geometry it owns.
-fn draw_shape(drawing: &mut Drawing, settings: &Settings, input: &CrosshairInput) {
+fn draw_shape(drawing: &mut Drawing, crosshair: &Crosshair, input: &CrosshairInput) {
+    let settings = &crosshair.settings;
     // Derive authored-to-physical scale once before dispatching the closed style vocabulary.
     let shape = Shape::new(settings, input);
+    // Fill belongs to the selected player's configuration and precedes every outline and dot.
+    if let Some(color) = crosshair.fill {
+        draw_fill(drawing, &shape, color);
+    }
+    draw_style(drawing, &shape);
+    // The dot style always draws its center; the optional flag augments other styles.
+    if settings.has_dot || settings.style == Style::Dot {
+        match crosshair.dot_shape {
+            crate::DotShape::Square => {
+                shape.rectangle(drawing, shape.center, Vec2::splat(shape.thickness), 1.0);
+            }
+            crate::DotShape::Circle => draw_dot(drawing, &shape),
+        }
+    }
+}
+
+/// Draws the selected bars, arcs, or square before the optional center dot.
+fn draw_style(drawing: &mut Drawing, shape: &Shape<'_>) {
+    // Share the validated measurements while keeping each style's geometry independent.
+    let settings = shape.settings;
     match settings.style {
         Style::DynamicCross | Style::StaticCross | Style::ShotCross => {
             shape.bars(drawing, shape.gap, shape.length, 1.0)
         }
-        Style::Legacy => draw_legacy(drawing, &shape),
+        Style::Legacy => draw_legacy(drawing, shape),
         Style::DynamicCircle | Style::StaticCircle => {
             shape.ring(drawing, shape.gap + shape.thickness, 1.0, false)
         }
@@ -246,13 +264,45 @@ fn draw_shape(drawing: &mut Drawing, settings: &Settings, input: &CrosshairInput
             settings.split_ratio,
             false,
         ),
-        Style::StaticSquare => draw_square(drawing, &shape),
+        Style::StaticSquare => draw_square(drawing, shape),
         Style::Dot => {}
     }
-    // The dot style always draws its center; the optional flag augments other styles.
-    if settings.has_dot || settings.style == Style::Dot {
-        shape.rectangle(drawing, shape.center, Vec2::splat(shape.thickness), 1.0);
+}
+
+/// Fills the open interior without inheriting foreground opacity.
+fn draw_fill(drawing: &mut Drawing, shape: &Shape<'_>, color: LinearRgba) {
+    // The square's inner edge is its gap; curved quads also include their arc-length offset.
+    match shape.settings.style {
+        Style::Dot => {}
+        Style::StaticSquare => {
+            drawing.rectangle(shape.center, Vec2::splat(shape.gap * 2.0), 0.0, color)
+        }
+        Style::DynamicQuad => drawing.disk(shape.center, shape.gap + shape.length, color),
+        Style::DynamicCross
+        | Style::DynamicCircle
+        | Style::Legacy
+        | Style::StaticCircle
+        | Style::StaticCross
+        | Style::ShotCross
+        | Style::StaticQuad => {
+            drawing.disk(shape.center, shape.gap, color);
+        }
     }
+}
+
+/// Draws a circular center dot with the same outline width as other shapes.
+fn draw_dot(drawing: &mut Drawing, shape: &Shape<'_>) {
+    // Paint the larger outline disk first so the foreground retains its specified diameter.
+    let border = match shape.settings.outline {
+        Outline::None => 0.0,
+        Outline::Full => 1.0,
+        Outline::Half => 0.5,
+    };
+    let radius = shape.thickness * 0.5;
+    if border > 0.0 {
+        drawing.disk(shape.center, radius + border, shape.settings.border());
+    }
+    drawing.disk(shape.center, radius, shape.settings.color());
 }
 
 /// Splits legacy bars only after the configured threshold is exceeded.

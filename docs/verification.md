@@ -120,3 +120,69 @@ strict-minimum and hardware limits described above.
 The library source is unchanged. LLVM line coverage continues to measure library
 Rust only; it excludes the changed playground window setup and JavaScript.
 The browser checks provide direct behavior evidence for those changed paths.
+
+## Feedback and gallery expansion
+
+The playground now includes three Enemy Territory maps and three Dirty Bomb maps,
+100 randomized crosshairs in one Bevy canvas, contextual setting previews, separate
+fill opacity, circular center dots, firing motion, and animated marker shapes.
+The [expansion plan](playground-expansion.md) records the API and regression sequence.
+
+Test execution reported 100% of 753 library Rust lines, including 12 internal-test
+lines. Independent instrumented Criterion execution reported 100% of 741 production
+lines and all 98 functions. Region coverage was 99.83% for tests and 99.56% for
+Criterion. The five uncovered benchmark regions remain in `plugin.rs` and
+`settings.rs`; no production line has zero hits. Branch instrumentation was not
+enabled. Examples, JavaScript, test and benchmark harnesses, and GPU shader
+instructions remain outside this LLVM denominator.
+
+Allocation instrumentation passed for all crosshair styles, empty output, fill,
+circular dots, and every marker shape/animation pair. Offscreen tests submitted
+these extensions through the real material pipeline. Criterion times all twenty
+marker combinations and a 100-crosshair geometry batch. Renderer timing uses a
+three-second measurement window to collect twenty samples without extending it.
+The first timing run showed regressions against earlier results on this shared
+device; no performance improvement is claimed from those comparisons.
+
+The preset generator has 100% Node line, branch, and function coverage. The browser
+regression passed 99 assertions at both 1280 × 800 and 390 × 844 CSS pixels. It checks
+all 43 settings, invalid configuration recovery, contextual previews, visual-preview
+event isolation, actual hit metadata, 100 rendered gallery entities, selection,
+return navigation, regeneration, and invalid WebAssembly boundary values.
+Layout and controlled image-request checks passed at 1280 × 800, 1280 × 400,
+390 × 844, 844 × 390, and 320 × 568. Keyboard selection opens Style with focus;
+reduced-motion preference stops repetition and selects the stationary fade.
+
+Browser behavior checks do not establish instrumented coverage of the JavaScript
+or WebAssembly example branches. The strict WebAssembly Clippy check retains one
+explicit `clippy::too_many_arguments` expectation on the existing nine-scalar
+`simulate` export to preserve its signature. Public and personal native Dylint
+checks retain their full all-target/all-feature scope.
+
+Logs, coverage output, Criterion reports, screenshots, and frame samples are kept
+under `/var/mnt/nixsd/agent-storage/artifacts/bevy-crosshair` and the SD-backed
+project target. Builds use `/tmp/deck-heavy-build.lock`; byte and inode checks run
+before large jobs and every sixty seconds during them.
+
+The final local release ran in focused, visible Chrome 154.0.8037.97 through ANGLE
+Vulkan on the AMD Custom GPU 0405, RADV VANGOGH. At 1280 × 800 CSS pixels and device
+pixel ratio 1, the editor canvas was 872 × 529 and the gallery canvas was
+1217 × 600. Each mode settled for 2.5 seconds before a twelve-second collection;
+intervals ending within the collection's first 1.5 seconds were excluded.
+The editor repeated an animated diamond marker over Gold Rush; the gallery rendered
+100 actual crosshair entities over that background.
+
+Eleven editor intervals averaged 60.004 FPS, with a 59.946 FPS minimum interval and
+19.0 ms longest frame. Ten gallery intervals averaged 60.002 FPS, with a 59.958 FPS
+minimum interval and 23.3 ms longest frame. This establishes nominal 60 FPS on this
+60 Hz display, subject to the strict-minimum and hardware limits stated above.
+An earlier gallery sample at the same size averaged 48.688 FPS. CPU profiling and
+repeat measurements were completed; no renderer optimization was needed to reach
+the target in the final sample. These samples demonstrate sensitivity to host
+conditions rather than a guaranteed minimum frame rate.
+
+Pixel checks isolated gap changes by disabling recoil translation. Dynamic cross
+expanded from 32 × 32 to 50 × 50 pixels after Fire and returned to 32 × 32.
+Shot-feedback cross expanded from 32 × 32 to 52 × 52 and returned to 32 × 32.
+Static cross remained 32 × 32 throughout. The separate host-motion test verifies
+recoil, restart behavior, and exact restoration of the configured baseline.

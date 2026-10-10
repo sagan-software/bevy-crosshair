@@ -5,7 +5,7 @@ A Bevy 0.20 plugin for configurable crosshairs and typed hit feedback.
 [Playground](https://sagan-software.github.io/bevy-crosshair/) ·
 [Rust API](https://sagan-software.github.io/bevy-crosshair/api/bevy_crosshair/) ·
 [CS2 compatibility](docs/cs2.md) · [Implementation plan](PLAN.md) ·
-[Verification](docs/verification.md)
+[Verification](docs/verification.md) · [Playground expansion plan](docs/playground-expansion.md)
 
 The playground runs the Rust plugin as WebAssembly. Change settings, supply weapon
 state, and fire hits with damage metadata. An independent event observer updates
@@ -29,13 +29,17 @@ bevy-crosshair = { git = "https://github.com/sagan-software/bevy-crosshair", fea
 
 ```rust
 use bevy::prelude::*;
-use bevy_crosshair::{Crosshair, CrosshairPlugin, Hit, HitFeedback, HitMarker};
+use bevy_crosshair::{Crosshair, CrosshairPlugin, Hit, HitFeedback, HitMarker, MarkerAnimation};
+use std::time::Duration;
 
 struct Damage(f32);
 
 impl HitFeedback for Damage {
     fn marker(&self) -> HitMarker {
-        HitMarker::default().scaled(1.0 + self.0 / 100.0)
+        HitMarker::default()
+            .with_animation(MarkerAnimation::Pulse)
+            .with_duration(Duration::from_millis(600))
+            .scaled(1.0 + self.0 / 100.0)
     }
 }
 
@@ -72,17 +76,25 @@ Shared timing and rendering install once.
 Later hits replace the current marker on the addressed crosshair. A zero-duration
 marker clears it. Missing targets are ignored by the visual observer. Other event
 observers still receive the event. Hit markers can remain visible when the normal
-crosshair is disabled.
+crosshair is disabled. Choose diagonal cross, plus, chevron, diamond, or ring
+geometry with `with_shape`. `with_animation` selects linear fade, eased expansion,
+eased contraction, or outward-and-return motion. The default remains linear fade.
+[The feedback example](examples/feedback.rs) demonstrates these extensions without
+a window.
 
 ## Configuration and host input
 
 ```rust
-use bevy_crosshair::{Crosshair, Style};
+use bevy::color::{Alpha, LinearRgba};
+use bevy_crosshair::{Crosshair, DotShape, Style};
 
 let mut crosshair: Crosshair =
     "cl_crosshairstyle 4; cl_crosshair_length 12; cl_crosshairdot 1"
         .parse().expect("valid crosshair settings");
 crosshair.set("cl_crosshaircolor_r", "255").expect("valid color channel");
+let crosshair = crosshair
+    .with_fill(LinearRgba::BLUE.with_alpha(0.25))
+    .with_dot_shape(DotShape::Circle);
 assert_eq!(crosshair.style(), Style::StaticCross);
 let console_settings = crosshair.to_string();
 ```
@@ -90,6 +102,9 @@ let console_settings = crosshair.to_string();
 Parsing and individual updates validate before changing stored settings. Export
 normalizes spellings. Unknown names and unsupported legacy names produce errors.
 The compatibility document defines the accepted grammar and limits.
+Fill color and opacity are independent of foreground color and opacity. Center dots
+can be square or circular. These visual extensions remain outside CS2 console
+export; retain them separately when saving a complete application configuration.
 
 `CrosshairInput` carries physical-pixel spread, shot feedback, recoil, viewport,
 friendly aim, spectator state, and `WeaponState`. A weapon can be unscoped, scoped,
@@ -107,6 +122,7 @@ the compiler and platform libraries are installed.
 
 ```sh
 cargo run --example basic
+cargo run --example feedback
 cargo run --example playground --features playground
 bash scripts/build_web.sh
 python3 -m http.server 8080 --directory dist
@@ -118,6 +134,8 @@ Right Arrow cycles styles, and Up Arrow supplies spread.
 ```sh
 cargo fmt --all -- --check
 cargo test
+cargo test --example playground --features playground
+node --test scripts/presets.test.mjs
 cargo clippy --all-targets --all-features -- -D warnings
 RUSTDOCFLAGS='-D warnings' cargo doc --no-deps --document-private-items --all-features
 cargo test --doc --all-features
@@ -136,7 +154,9 @@ to pass. CI uses the same wrapper; a configured but inactive lint cannot satisfy
 Test coverage requires at least 95% instrumented library Rust lines. Benchmark
 execution independently requires 100%. Criterion runs the conformance cases with
 `--test` under LLVM instrumentation, including an offscreen GPU pipeline and all
-ten rendering modes. Timing runs use the release profile without instrumentation.
+ten rendering modes, five marker shapes, and four marker animations. Timing runs
+use the release profile without instrumentation.
+Criterion also measures generation of 100 crosshairs in one iteration.
 Examples, benchmark harnesses, and test harnesses are excluded from the library
 coverage denominator. GPU shader instructions cannot be measured by LLVM Rust line
 coverage; shader validation, pipeline creation, and browser rendering check them.
@@ -146,21 +166,42 @@ elapsed real second and the longest frame in that interval. Browser visibility,
 display refresh, GPU, and host load affect the result; no universal FPS guarantee
 is implied.
 
-## Playground backgrounds
+## Playground
 
-The Background selector offers Solid, CS2 Dust II and Overpass, and VALORANT
-Ascent and Icebox. The preview fits the browser window while settings scroll
-independently. The transparent Bevy canvas renders over the selected image.
+The preview fits the browser window while settings scroll independently.
+All 43 CS2 settings remain available.
 
-Game images load from publisher servers when selected. Each scene links to its
-publisher. Failed loads retain the solid background and show recovery text.
+- Browse 100 compares randomized crosshairs in one Bevy canvas. Select one to edit
+  its settings. Back to gallery retains the collection and selection; Generate 100
+  replaces the collection. Back to editor retains your current edits.
+- Fill color has its own opacity. Dot shape switches an enabled center dot between
+  square and circle geometry.
+- Grenade lineup guides, sniper and optical sights, split arms, and spectators have
+  explanations and preview actions. The preview identifies the simulated state;
+  Reset simulation returns to ordinary aiming.
+- Fire briefly opens dynamic crosshairs and supplies recoil, then restores the
+  simulation values. Static shapes retain their configured gap.
+- The Hits tab replays changes immediately. Choose a shape and animation, or enable
+  Repeat preview. These visual previews send no gameplay event or sound. Fire sends
+  the typed hit event to the independent receipt and optional sound observer.
+
+The Background selector offers Solid and ten map scenes:
+
+- CS2: Dust II and Overpass.
+- VALORANT: Ascent and Icebox.
+- Wolfenstein: Enemy Territory: Gold Rush, Fuel Dump, and Rail Gun.
+- Dirty Bomb: Vault, Dockyard, and Chapel.
+
+Images load from external sources when selected. Each scene links to its source.
+Failed loads retain the solid background and show recovery text.
 See [background sources](docs/backgrounds.md) for provenance.
 
-To check layout and background request handling, evaluate
-[scripts/check_playground.js](scripts/check_playground.js) in the loaded page.
-Run it at 1280 × 800, 1280 × 400, 390 × 844, 844 × 390, and 320 × 568 CSS pixels.
-The result must report `passed: true`. It restores the selected background after
-checking controlled image success, failure, and stale completions.
+Evaluate [scripts/check_playground.js](scripts/check_playground.js) in the loaded
+page at 1280 × 800, 1280 × 400, 390 × 844, 844 × 390, and 320 × 568 CSS pixels.
+It checks layout and controlled image success, failure, and stale completions.
+Evaluate [scripts/check_feedback.js](scripts/check_feedback.js) on desktop and
+mobile to check settings, contextual previews, event delivery, gallery navigation,
+and invalid browser inputs. Both checks must report `passed: true`.
 
 ## License
 

@@ -9,6 +9,8 @@ use bevy::prelude::*;
 use std::fmt;
 use std::str::FromStr;
 
+pub use self::dot_shape::DotShape;
+
 /// Crosshair configuration stored on the entity that receives hit events. Text
 /// updates
 /// validate every value before modifying this component or its generated
@@ -19,9 +21,49 @@ use std::str::FromStr;
 pub struct Crosshair {
     /// Authoritative validated settings, shared by every rendering mode.
     pub(crate) settings: Settings,
+    /// Validated visible fill, absent when transparent or non-finite.
+    pub(crate) fill: Option<LinearRgba>,
+    /// Center-dot geometry, independent of whether the dot is enabled.
+    pub(crate) dot_shape: DotShape,
 }
 
+mod dot_shape;
+
 impl Crosshair {
+    /// Paints a fill behind ordinary crosshair geometry with independent linear
+    /// RGBA color and opacity. Non-finite colors become transparent; alpha is
+    /// clamped to zero through one. CS2 console export excludes this extension.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use bevy::color::Alpha;
+    /// use bevy::color::LinearRgba;
+    /// use bevy_crosshair::Crosshair;
+    /// let crosshair = Crosshair::default().with_fill(LinearRgba::BLUE.with_alpha(0.2));
+    /// ```
+    pub fn with_fill(mut self, color: LinearRgba) -> Self {
+        // Reject non-finite color before retaining it; transparent fill needs no geometry.
+        self.fill = (color.to_vec4().is_finite() && color.alpha > 0.0)
+            .then(|| color.with_alpha(color.alpha.min(1.0)));
+        self
+    }
+
+    /// Chooses the center-dot geometry without enabling the optional dot.
+    /// The dedicated dot style always uses this shape. CS2 console export excludes
+    /// this extension, so downstream games retain it separately from console text.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use bevy_crosshair::{Crosshair, DotShape};
+    /// let crosshair = Crosshair::default().with_dot_shape(DotShape::Circle);
+    /// ```
+    pub fn with_dot_shape(mut self, shape: DotShape) -> Self {
+        self.dot_shape = shape;
+        self
+    }
+
     /// Returns the configured style before spectator policy selects a displayed
     /// crosshair.
     /// Changing host spread, recoil, or weapon state never changes this stored

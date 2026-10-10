@@ -69,6 +69,6 @@ fn receive<T: HitFeedback>(
 fn tick(time: Res<'_, Time>, mut markers: Query<'_, '_, &mut HitMarker>) {
     markers
         .iter_mut()
-        .filter(|marker| marker.opacity() > 0.0)
+        .filter(|marker| marker.is_active())
         .for_each(|mut marker| marker.advance(time.delta()));
 }

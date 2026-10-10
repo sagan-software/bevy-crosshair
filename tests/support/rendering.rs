@@ -73,6 +73,7 @@ pub(crate) fn run() -> App {
     let mut app = application();
     let target = target(&mut app);
     render_modes(&mut app, target);
+    render_extensions(&mut app, target);
     // Confirm material compilation before despawning, so an empty scene cannot pass.
     for _ in 0..20 {
         app.update();
@@ -146,5 +147,45 @@ fn render_modes(app: &mut App, target: Entity) {
         // The second update covers stable material synchronization.
         app.update();
         app.update();
+    }
+}
+
+/// Submits the new visual extensions through the same material pipeline.
+fn render_extensions(app: &mut App, target: Entity) {
+    // Filled interiors, circular dots, and each animated marker use the same backend.
+    app.world_mut()
+        .get_entity_mut(target)
+        .expect("the target is alive")
+        .insert(
+            "cl_crosshairdot true; cl_crosshair_gap 24"
+                .parse::<Crosshair>()
+                .expect("the filled fixture is valid")
+                .with_fill(LinearRgba::BLUE.with_alpha(0.25))
+                .with_dot_shape(bevy_crosshair::DotShape::Circle),
+        );
+    for shape in [
+        bevy_crosshair::MarkerShape::Cross,
+        bevy_crosshair::MarkerShape::Plus,
+        bevy_crosshair::MarkerShape::Chevron,
+        bevy_crosshair::MarkerShape::Diamond,
+        bevy_crosshair::MarkerShape::Ring,
+    ] {
+        for animation in [
+            bevy_crosshair::MarkerAnimation::Fade,
+            bevy_crosshair::MarkerAnimation::Expand,
+            bevy_crosshair::MarkerAnimation::Contract,
+            bevy_crosshair::MarkerAnimation::Pulse,
+        ] {
+            let mut marker = HitMarker::default()
+                .with_shape(shape)
+                .with_animation(animation);
+            // Submit a visible frame directly; a real hit would restart the fade-in clock.
+            marker.advance(Duration::from_millis(90));
+            app.world_mut()
+                .get_entity_mut(target)
+                .expect("the target is alive")
+                .insert(marker);
+            app.update();
+        }
     }
 }

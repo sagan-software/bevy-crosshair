@@ -7,9 +7,12 @@
 #[path = "../tests/support/mod.rs"]
 mod support;
 
+use bevy::color::Alpha;
 use bevy_crosshair::Crosshair;
 use bevy_crosshair::CrosshairInput;
 use bevy_crosshair::HitMarker;
+use bevy_crosshair::MarkerAnimation;
+use bevy_crosshair::MarkerShape;
 use bevy_crosshair::Style;
 use criterion::BenchmarkId;
 use criterion::Criterion;
@@ -75,15 +78,66 @@ fn operations(criterion: &mut Criterion) {
     });
 }
 
+/// Measures each marker shape and animation at a visible point in its lifetime.
+fn marker_modes(criterion: &mut Criterion) {
+    let crosshair = Crosshair::default();
+    let input = CrosshairInput::default();
+    // Each pair gets a retained fixture so setup is excluded from timing.
+    for shape in [
+        MarkerShape::Cross,
+        MarkerShape::Plus,
+        MarkerShape::Chevron,
+        MarkerShape::Diamond,
+        MarkerShape::Ring,
+    ] {
+        for animation in [
+            MarkerAnimation::Fade,
+            MarkerAnimation::Expand,
+            MarkerAnimation::Contract,
+            MarkerAnimation::Pulse,
+        ] {
+            let mut marker = HitMarker::default()
+                .with_shape(shape)
+                .with_animation(animation);
+            // Exclude clock advancement from the geometry timing itself.
+            marker.advance(Duration::from_millis(90));
+            criterion.bench_function(&format!("marker/{shape:?}/{animation:?}"), |bench| {
+                bench
+                    .iter(|| black_box(crosshair.draw(black_box(&input), Some(black_box(&marker)))))
+            });
+        }
+    }
+}
+
+/// Measures one hundred configurations without allocating between iterations.
+fn gallery(criterion: &mut Criterion) {
+    let input = CrosshairInput::default();
+    // A full gallery retains its owned configurations outside the timed loop.
+    let gallery: [Crosshair; 100] = std::array::from_fn(|index| {
+        Crosshair::default()
+            .with_style(Style::try_from((index % 10) as u8).expect("valid style"))
+            .with_fill(bevy::color::LinearRgba::BLUE.with_alpha(0.2))
+            .with_dot_shape(bevy_crosshair::DotShape::Circle)
+    });
+    criterion.bench_function("gallery/100_geometry", |bench| {
+        bench.iter(|| {
+            for crosshair in &gallery {
+                black_box(crosshair.draw(black_box(&input), None));
+            }
+        })
+    });
+}
+
 /// Keeps validation and rare policy paths in the measured benchmark executable.
 fn conformance(criterion: &mut Criterion) {
-    let scenarios: [(&str, fn()); 6] = [
+    let scenarios: [(&str, fn()); 7] = [
         ("configuration", support::configuration),
         ("geometry", support::geometry),
         ("policies", support::policies),
         ("markers", support::markers),
         ("events", support::events),
         ("reflection", support::reflection),
+        ("extensions", support::extensions),
     ];
     for (name, scenario) in scenarios {
         criterion.bench_function(&format!("conformance/{name}"), |bench| bench.iter(scenario));
@@ -97,6 +151,8 @@ fn rendering(criterion: &mut Criterion) {
     let mut app = support::rendering();
     let target = app.world_mut().spawn(Crosshair::default()).id();
     let mut group = criterion.benchmark_group("render_submission");
+    // Allow twenty GPU samples to complete without extending the requested measurement window.
+    group.measurement_time(Duration::from_secs(3));
     // Keep one entity alive while changing only its rendering mode.
     for code in 0..10 {
         let style = Style::try_from(code).expect("the current profile defines this style");
@@ -120,6 +176,8 @@ fn main() {
         .configure_from_args();
     geometry(&mut criterion);
     operations(&mut criterion);
+    marker_modes(&mut criterion);
+    gallery(&mut criterion);
     // Coverage mode still executes boundary scenarios that ordinary timings rarely reach.
     conformance(&mut criterion);
     #[cfg(feature = "playground")]

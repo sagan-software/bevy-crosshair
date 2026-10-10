@@ -38,6 +38,42 @@ fn geometry_allocates_nothing_for_every_style_and_empty_output() {
     let region = Region::new(ALLOCATOR);
     assert!(empty.draw(&input, None).as_ref().is_empty());
     assert_eq!(region.change().allocations, 0);
+    fill_and_every_marker_animation_allocate_nothing();
+}
+
+/// Checks new geometry in the same allocator test, avoiding concurrent measurements.
+fn fill_and_every_marker_animation_allocate_nothing() {
+    use bevy_crosshair::DotShape;
+    use bevy_crosshair::MarkerAnimation;
+    use bevy_crosshair::MarkerShape;
+    // Retain fixtures outside the measured region so only geometry allocations count.
+    let crosshair = Crosshair::default()
+        .with_fill(bevy::color::LinearRgba::BLUE)
+        .with_dot_shape(DotShape::Circle);
+    let input = CrosshairInput::default();
+    for shape in [
+        MarkerShape::Cross,
+        MarkerShape::Plus,
+        MarkerShape::Chevron,
+        MarkerShape::Diamond,
+        MarkerShape::Ring,
+    ] {
+        for animation in [
+            MarkerAnimation::Fade,
+            MarkerAnimation::Expand,
+            MarkerAnimation::Contract,
+            MarkerAnimation::Pulse,
+        ] {
+            let mut marker = HitMarker::default()
+                .with_shape(shape)
+                .with_animation(animation);
+            marker.advance(std::time::Duration::from_millis(90));
+            // Each visible shape and animation must preserve the zero-allocation contract.
+            let region = Region::new(ALLOCATOR);
+            std::hint::black_box(crosshair.draw(&input, Some(&marker)));
+            assert_eq!(region.change().allocations, 0);
+        }
+    }
 }
 
 use arrayvec as _;

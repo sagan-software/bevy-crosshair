@@ -41,12 +41,15 @@ pub use self::config::Style;
 pub use self::config::WeaponState;
 pub use self::crosshair::Crosshair;
 pub use self::crosshair::CrosshairInput;
+pub use self::crosshair::DotShape;
 pub use self::crosshair::Spectator;
 pub use self::drawing::Drawing;
 pub use self::drawing::Primitive;
 pub use self::hit::Hit;
 pub use self::marker::HitFeedback;
 pub use self::marker::HitMarker;
+pub use self::marker::MarkerAnimation;
+pub use self::marker::MarkerShape;
 pub use self::plugin::CrosshairPlugin;
 
 #[cfg(test)]
