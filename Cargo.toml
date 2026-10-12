@@ -35,7 +35,7 @@ naga = { version = "30.0.0", features = ["wgsl-in"] }
 stats_alloc = "0.1.0"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-wasm-bindgen = "=0.2.127"
+wasm-bindgen = "=0.2.129"
 
 [[example]]
 name = "playground"

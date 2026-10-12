@@ -21,7 +21,7 @@ jobs:
       - name: Install Rust and matching WebAssembly bindings
         run: |
           rustup toolchain install 1.99.0 --profile minimal --target wasm32-unknown-unknown
-          cargo install --locked wasm-bindgen-cli --version 0.2.127
+          cargo install --locked wasm-bindgen-cli --version 0.2.129
       - name: Build the Bevy playground
         run: bash scripts/build_web.sh
       - name: Build public API documentation
