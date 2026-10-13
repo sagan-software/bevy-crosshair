@@ -172,7 +172,7 @@ fn colored_geometry(criterion: &mut Criterion) {
 
 /// Keeps validation and rare policy paths in the measured benchmark executable.
 fn conformance(criterion: &mut Criterion) {
-    let scenarios: [(&str, fn()); 7] = [
+    let scenarios: [(&str, fn()); 8] = [
         ("configuration", support::configuration),
         ("geometry", support::geometry),
         ("policies", support::policies),
@@ -180,6 +180,7 @@ fn conformance(criterion: &mut Criterion) {
         ("events", support::events),
         ("reflection", support::reflection),
         ("extensions", support::extensions),
+        ("layers", support::layers),
     ];
     for (name, scenario) in scenarios {
         criterion.bench_function(&format!("conformance/{name}"), |bench| bench.iter(scenario));

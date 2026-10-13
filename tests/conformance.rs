@@ -58,3 +58,9 @@ fn reflection() {
 fn extensions() {
     support::extensions();
 }
+
+/// Custom layers draw every mark within the fixed primitive budget.
+#[test]
+fn layers() {
+    support::layers();
+}

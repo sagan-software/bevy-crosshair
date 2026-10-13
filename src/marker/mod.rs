@@ -12,10 +12,8 @@ pub use self::shape::MarkerShape;
 #[derive(Component, Clone, Copy, Debug, Reflect)]
 #[reflect(opaque)]
 pub struct HitMarker {
-    /// Elapsed lifetime since delivery.
-    elapsed: Duration,
-    /// Complete fade duration.
-    duration: Duration,
+    /// Elapsed, total and held time since delivery.
+    lifetime: Lifetime,
     /// Marker length and thickness in physical pixels.
     size: Vec2,
     /// Distance from center to each marker arm in physical pixels.
@@ -31,11 +29,25 @@ pub struct HitMarker {
 mod animation;
 mod shape;
 
+/// Marker timing, grouped so the component keeps its appearance fields apart.
+#[derive(Clone, Copy, Debug)]
+struct Lifetime {
+    /// Elapsed time since delivery, saturating at the duration.
+    elapsed: Duration,
+    /// Complete visible duration, including the hold.
+    duration: Duration,
+    /// Initial part of the duration before the animation starts.
+    hold: Duration,
+}
+
 impl Default for HitMarker {
     fn default() -> Self {
         Self {
-            elapsed: Duration::ZERO,
-            duration: Duration::from_millis(180),
+            lifetime: Lifetime {
+                elapsed: Duration::ZERO,
+                duration: Duration::from_millis(180),
+                hold: Duration::ZERO,
+            },
             size: Vec2::new(7.0, 2.0),
             gap: 9.0,
             color: LinearRgba::WHITE,
@@ -115,7 +127,68 @@ impl HitMarker {
     /// let marker = HitMarker::default().with_duration(Duration::from_millis(250));
     /// ```
     pub fn with_duration(mut self, duration: Duration) -> Self {
-        self.duration = duration;
+        self.lifetime.duration = duration;
+        self
+    }
+
+    /// Sets arm length and thickness in physical pixels, replacing earlier
+    /// scaling. Negative or non-finite dimensions produce an invisible marker;
+    /// each dimension is capped at 8192 pixels.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use bevy::math::Vec2;
+    /// use bevy_crosshair::HitMarker;
+    /// let marker = HitMarker::default().with_size(Vec2::new(21.0, 2.0));
+    /// ```
+    pub fn with_size(mut self, size: Vec2) -> Self {
+        // Invalid host values cannot inject non-finite geometry into the renderer.
+        self.size = if size.is_finite() {
+            size.clamp(Vec2::ZERO, Vec2::splat(8192.0))
+        } else {
+            Vec2::ZERO
+        };
+        self
+    }
+
+    /// Sets the empty distance between the center and each arm, in physical
+    /// pixels. Negative or non-finite gaps become zero; gaps are capped at 8192
+    /// pixels.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use bevy_crosshair::HitMarker;
+    /// let marker = HitMarker::default().with_gap(8.0);
+    /// ```
+    pub fn with_gap(mut self, gap: f32) -> Self {
+        self.gap = if gap.is_finite() {
+            gap.clamp(0.0, 8192.0)
+        } else {
+            0.0
+        };
+        self
+    }
+
+    /// Holds the marker at its animation's starting state for the first part
+    /// of its duration; the animation then runs over the rest. With the fade
+    /// animation this keeps full opacity before fading. A hold at or beyond the
+    /// duration keeps the starting state until the marker expires.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use std::time::Duration;
+    /// use bevy_crosshair::HitMarker;
+    /// let mut marker = HitMarker::default()
+    ///     .with_duration(Duration::from_millis(700))
+    ///     .with_hold(Duration::from_millis(250));
+    /// marker.advance(Duration::from_millis(200));
+    /// assert_eq!(marker.opacity(), 1.0);
+    /// ```
+    pub fn with_hold(mut self, hold: Duration) -> Self {
+        self.lifetime.hold = hold;
         self
     }
 
@@ -156,12 +229,16 @@ impl HitMarker {
     /// ```
     pub fn advance(&mut self, delta: Duration) {
         // Saturate elapsed time so long frames cannot overflow or revive an expired marker.
-        self.elapsed = self.elapsed.saturating_add(delta).min(self.duration);
+        self.lifetime.elapsed = self
+            .lifetime
+            .elapsed
+            .saturating_add(delta)
+            .min(self.lifetime.duration);
     }
 
     /// Keeps fade-in clocks advancing even while their first frame is transparent.
     pub(crate) fn is_active(&self) -> bool {
-        self.elapsed < self.duration
+        self.lifetime.elapsed < self.lifetime.duration
     }
 
     /// Returns current animation opacity. Fade starts at one and decreases linearly.
@@ -185,13 +262,20 @@ impl HitMarker {
         }
     }
 
-    /// Returns a bounded lifetime fraction, treating zero duration as expired.
+    /// Returns a bounded animation fraction, treating zero duration as expired.
+    /// The hold keeps the fraction at zero until it elapses.
     fn progress(&self) -> f32 {
-        if self.duration.is_zero() {
-            1.0
-        } else {
-            (self.elapsed.as_secs_f32() / self.duration.as_secs_f32()).min(1.0)
+        // Expired and zero-length lifetimes end every animation.
+        if self.lifetime.duration.is_zero() || self.lifetime.elapsed >= self.lifetime.duration {
+            return 1.0;
         }
+        // Both durations are seconds; their ratio is a unitless lifetime fraction.
+        let animated = self.lifetime.duration.saturating_sub(self.lifetime.hold);
+        if animated.is_zero() {
+            return 0.0;
+        }
+        let elapsed = self.lifetime.elapsed.saturating_sub(self.lifetime.hold);
+        (elapsed.as_secs_f32() / animated.as_secs_f32()).min(1.0)
     }
 
     /// Derives radial displacement without storing a second animation clock.
@@ -289,10 +373,9 @@ fn ease(fraction: f32) -> f32 {
 
 impl HitFeedback for HitMarker {
     fn marker(&self) -> HitMarker {
-        Self {
-            elapsed: Duration::ZERO,
-            ..*self
-        }
+        let mut marker = *self;
+        marker.lifetime.elapsed = Duration::ZERO;
+        marker
     }
 }
 
@@ -328,8 +411,8 @@ mod tests {
     #[test]
     fn inactive_marker_has_no_visible_lifetime() {
         let marker = HitMarker::inactive();
-        assert!(marker.duration.is_zero());
-        assert!(marker.elapsed.is_zero());
+        assert!(marker.lifetime.duration.is_zero());
+        assert!(marker.lifetime.elapsed.is_zero());
     }
 
     #[test]
@@ -339,6 +422,6 @@ mod tests {
         assert!(marker.is_active());
         marker.advance(std::time::Duration::MAX);
         assert!(!marker.is_active());
-        assert_eq!(marker.elapsed, marker.duration);
+        assert_eq!(marker.lifetime.elapsed, marker.lifetime.duration);
     }
 }

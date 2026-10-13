@@ -169,6 +169,29 @@ impl From<&Primitive> for GpuPrimitive {
                 parameters: Vec4::new(1.0, 0.0, fraction, f32::from(u8::from(is_top_omitted))),
                 color: color.to_vec4(),
             },
+            Primitive::Arc {
+                center,
+                radius,
+                thickness,
+                direction,
+                half_sweep,
+                color,
+            } => Self {
+                geometry: center.extend(radius).extend(thickness),
+                parameters: Vec4::new(2.0, direction, half_sweep, 0.0),
+                color: color.to_vec4(),
+            },
+            Primitive::FadingRectangle {
+                center,
+                size,
+                rotation,
+                solid,
+                color,
+            } => Self {
+                geometry: center.extend(size.x).extend(size.y),
+                parameters: Vec4::new(3.0, rotation, solid, 0.0),
+                color: color.to_vec4(),
+            },
         }
     }
 }
@@ -182,6 +205,12 @@ fn bounds(source: &Primitive) -> Vec2 {
             size,
             rotation,
             ..
+        }
+        | Primitive::FadingRectangle {
+            center,
+            size,
+            rotation,
+            ..
         } => {
             // Absolute sine and cosine project rotated width and height onto screen axes.
             let (sin, cos) = rotation.sin_cos();
@@ -191,6 +220,8 @@ fn bounds(source: &Primitive) -> Vec2 {
                     sin.abs() * size.x + cos.abs() * size.y,
                 ) * 0.5
         }
-        Primitive::Ring { center, radius, .. } => center.abs() + Vec2::splat(radius),
+        Primitive::Ring { center, radius, .. } | Primitive::Arc { center, radius, .. } => {
+            center.abs() + Vec2::splat(radius)
+        }
     }
 }

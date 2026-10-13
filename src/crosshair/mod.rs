@@ -25,6 +25,8 @@ pub struct Crosshair {
     pub(crate) fill: Option<LinearRgba>,
     /// Center-dot geometry, independent of whether the dot is enabled.
     pub(crate) dot_shape: DotShape,
+    /// Custom layers that replace the console style when present.
+    pub(crate) layers: arrayvec::ArrayVec<crate::Layer, { crate::layer::MAX_LAYERS }>,
 }
 
 mod dot_shape;
@@ -62,6 +64,38 @@ impl Crosshair {
     pub fn with_dot_shape(mut self, shape: DotShape) -> Self {
         self.dot_shape = shape;
         self
+    }
+
+    /// Appends a custom shape layer. Any layer replaces the console style, fill
+    /// and center dot with the layers, painted in insertion order. A crosshair
+    /// keeps at most three layers; later ones are ignored. CS2 console export
+    /// excludes layers.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use bevy_crosshair::{Crosshair, Layer, Mark};
+    /// let dot = Layer::new(Mark::Dot { diameter: 2.0 });
+    /// let crosshair = Crosshair::default().with_layer(dot);
+    /// assert_eq!(crosshair.layers().len(), 1);
+    /// ```
+    pub fn with_layer(mut self, layer: crate::Layer) -> Self {
+        // A full layer list keeps the drawing within its fixed primitive capacity.
+        let _ignored = self.layers.try_push(layer);
+        self
+    }
+
+    /// Returns the custom layers in paint order. The slice is empty when the
+    /// crosshair draws its console style, and holds at most three layers.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use bevy_crosshair::Crosshair;
+    /// assert!(Crosshair::default().layers().is_empty());
+    /// ```
+    pub fn layers(&self) -> &[crate::Layer] {
+        &self.layers
     }
 
     /// Returns the configured style before spectator policy selects a displayed

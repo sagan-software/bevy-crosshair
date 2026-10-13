@@ -107,4 +107,47 @@ pub enum Primitive {
         /// over earlier shapes; callers should preserve the returned paint order.
         color: LinearRgba,
     },
+    /// One circular arc of a ring, centered on an arbitrary direction. Custom
+    /// layers use it for brackets and other curved marks.
+    Arc {
+        /// Center of the arc's own circle in physical pixels relative to the
+        /// viewport center, with positive Y pointing down. It need not be the
+        /// crosshair center.
+        center: Vec2,
+        /// Outer radius in physical pixels, measured from the arc's own circle
+        /// center. Radial thickness extends inward from this outer boundary toward that center.
+        radius: f32,
+        /// Radial thickness in physical pixels, extending inward from the outer
+        /// radius. Outlined arcs paint a thicker arc behind the foreground.
+        thickness: f32,
+        /// Direction of the arc's midpoint in radians, clockwise from straight
+        /// up, measured around the arc's own circle center rather than the viewport center.
+        direction: f32,
+        /// Half of the arc's angular extent in radians, from zero through pi.
+        /// The arc covers this angle on both sides of its direction.
+        half_sweep: f32,
+        /// Linear RGBA color for GPU blending, including opacity. The renderer
+        /// composites each shape over all earlier shapes in the returned paint order.
+        color: LinearRgba,
+    },
+    /// Rotated rectangle whose opacity fades along its length. The local
+    /// negative-X half starts opaque; opacity falls linearly to zero at the
+    /// local positive-X end after the solid fraction.
+    FadingRectangle {
+        /// Rectangle center in physical pixels relative to the viewport center.
+        /// Positive X moves right and positive Y moves down before rotation.
+        center: Vec2,
+        /// Width along the fade and height across it, in physical pixels,
+        /// before rotation. Geometry generation omits rectangles with a nonpositive dimension.
+        size: Vec2,
+        /// Clockwise rotation in radians around the rectangle center. The fade
+        /// direction always rotates together with the rectangle's own local positive-X axis.
+        rotation: f32,
+        /// Fraction of the width at full opacity, from zero through one,
+        /// measured from the local negative-X end. The rest fades to zero.
+        solid: f32,
+        /// Linear RGBA color at full opacity, before the fade multiplies its
+        /// alpha. The renderer composites each shape over earlier shapes in paint order.
+        color: LinearRgba,
+    },
 }

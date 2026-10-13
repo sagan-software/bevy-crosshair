@@ -14,13 +14,21 @@ struct Uniforms {
 
 fn coverage(shape: Primitive, point: vec2<f32>) -> f32 {
     let relative = point - shape.geometry.xy;
-    // Tag zero is a rotated rectangle; tag one is a ring or segmented ring.
-    if shape.parameters.x < 0.5 {
+    // Tag zero is a rotated rectangle and tag three a fading one; tag one is a
+    // ring or segmented ring and tag two a single arc.
+    if shape.parameters.x < 0.5 || shape.parameters.x > 2.5 {
         let angle = shape.parameters.y;
         let local = vec2<f32>(cos(angle) * relative.x + sin(angle) * relative.y,
             -sin(angle) * relative.x + cos(angle) * relative.y);
         let distance = abs(local) - shape.geometry.zw * 0.5;
-        return clamp(0.5 - max(distance.x, distance.y), 0.0, 1.0);
+        var alpha = clamp(0.5 - max(distance.x, distance.y), 0.0, 1.0);
+        if shape.parameters.x > 2.5 {
+            // Opacity stays full over the solid fraction from local -X, then falls to zero.
+            let along = clamp(local.x / max(shape.geometry.z, 1.0) + 0.5, 0.0, 1.0);
+            let solid = shape.parameters.z;
+            alpha *= clamp(1.0 - (along - solid) / max(1.0 - solid, 0.0001), 0.0, 1.0);
+        }
+        return alpha;
     }
     let radius = length(relative);
     let outside = radius - shape.geometry.z;
@@ -28,6 +36,11 @@ fn coverage(shape: Primitive, point: vec2<f32>) -> f32 {
     var alpha = clamp(0.5 - max(outside, inside), 0.0, 1.0);
     // Angle zero points up, matching CPU geometry with positive Y downward.
     let angle = atan2(relative.x, -relative.y);
+    if shape.parameters.x > 1.5 {
+        // Wrap the difference to -pi..pi before comparing it with the half sweep.
+        let difference = abs(atan2(sin(angle - shape.parameters.y), cos(angle - shape.parameters.y)));
+        return alpha * clamp(0.5 - (difference - shape.parameters.z) * max(radius, 1.0), 0.0, 1.0);
+    }
     if shape.parameters.w > 0.5 && abs(angle) < 0.785398163 {
         alpha = 0.0;
     }

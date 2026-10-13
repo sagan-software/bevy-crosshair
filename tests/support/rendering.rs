@@ -152,6 +152,7 @@ fn render_modes(app: &mut App, target: Entity) {
 
 /// Submits the new visual extensions through the same material pipeline.
 fn render_extensions(app: &mut App, target: Entity) {
+    render_layers(app, target);
     // Filled interiors, circular dots, and each animated marker use the same backend.
     app.world_mut()
         .get_entity_mut(target)
@@ -188,4 +189,14 @@ fn render_extensions(app: &mut App, target: Entity) {
             app.update();
         }
     }
+}
+
+/// Submits arcs and fading bars, which use their own shader tags.
+fn render_layers(app: &mut App, target: Entity) {
+    // One frame with every custom mark reaches the encoder and the shader.
+    app.world_mut()
+        .get_entity_mut(target)
+        .expect("the target is alive")
+        .insert(super::layered());
+    app.update();
 }

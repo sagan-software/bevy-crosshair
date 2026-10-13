@@ -224,6 +224,13 @@ fn draw_shape(drawing: &mut Drawing, crosshair: &Crosshair, input: &CrosshairInp
     let settings = &crosshair.settings;
     // Derive authored-to-physical scale once before dispatching the closed style vocabulary.
     let shape = Shape::new(settings, input);
+    // Custom layers replace the console style, its fill and its center dot.
+    if !crosshair.layers.is_empty() {
+        for layer in &crosshair.layers {
+            crate::layer::draw(drawing, layer, shape.center, shape.scale, input.spread);
+        }
+        return;
+    }
     // Fill belongs to the selected player's configuration and precedes every outline and dot.
     if let Some(color) = crosshair.fill {
         draw_fill(drawing, &shape, color);

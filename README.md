@@ -109,13 +109,39 @@ Fill color and opacity are independent of foreground color and opacity. Center d
 can be square or circular. These visual extensions remain outside CS2 console
 export; retain them separately when saving a complete application configuration.
 
+### Custom layers
+
+`Crosshair::with_layer` replaces the console style, fill and center dot with up
+to three `Layer`s. Each layer repeats one `Mark` (dot, bar, chevron, arc or ring)
+at up to four angles, measured in degrees clockwise from straight up. A layer has
+its own color, an optional one-pixel outline, and an optional spread range. A
+static center mark and a separate set of marks that move with spread form a
+two-layer crosshair. Bars can fade toward their outer end.
+
+```rust
+use bevy::color::LinearRgba;
+use bevy_crosshair::{Crosshair, Layer, Mark};
+
+let dot = Layer::new(Mark::Dot { diameter: 2.0 }).with_outline(LinearRgba::BLACK);
+let wires = Layer::new(Mark::Bar { length: 17.0, thickness: 2.0, solid: 0.3 })
+    .at_angles(&[0.0, 90.0, 180.0, 270.0])
+    .following_spread(4.0, 64.0);
+let crosshair = Crosshair::default().with_layer(wires).with_layer(dot);
+```
+
+Layer dimensions use authored pixels and follow `cl_crosshair_screen_height`.
+Visibility, recoil, and the scope, optical-sight, and grenade states still follow
+the console settings. Console export excludes layers. `examples/layers.rs` prints
+the generated geometry. `HitMarker::with_size`, `with_gap`, and `with_hold` set
+absolute marker dimensions and an opaque hold before the animation.
+
 `CrosshairInput` carries physical-pixel spread, shot feedback, recoil, viewport,
 friendly aim, spectator state, and `WeaponState`. A weapon can be unscoped, scoped,
 in a scope transition, using an optical sight, or holding one grenade. The host
 owns ballistics, damage units, timers, relationships, and recoil decay.
 
 Without the `render` feature, use `Crosshair::draw` to obtain bounded rectangles
-and rings for another backend. Geometry generation borrows input and uses a fixed
+rings, arcs and fading rectangles for another backend. Geometry generation borrows input and uses a fixed
 64-primitive stack buffer. Allocation tests cover every style and empty output.
 
 ## Development

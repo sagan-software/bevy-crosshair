@@ -91,7 +91,10 @@ fn assert_dot(crosshair: &Crosshair, foreground: [u8; 4], outline: [u8; 4]) {
 /// Preserves exact component bits, including zero, rather than approximate color equality.
 fn color_bits(primitive: &Primitive) -> [u32; 4] {
     let color: &LinearRgba = match primitive {
-        Primitive::Rectangle { color, .. } | Primitive::Ring { color, .. } => color,
+        Primitive::Rectangle { color, .. }
+        | Primitive::Ring { color, .. }
+        | Primitive::Arc { color, .. }
+        | Primitive::FadingRectangle { color, .. } => color,
     };
     color.to_vec4().to_array().map(f32::to_bits)
 }

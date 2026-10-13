@@ -284,8 +284,10 @@ fn marker_extent(mut marker: HitMarker, milliseconds: u64) -> f32 {
         .as_ref()
         .iter()
         .map(|primitive| match primitive {
-            Primitive::Rectangle { center, .. } => center.length(),
-            Primitive::Ring { radius, .. } => *radius,
+            Primitive::Rectangle { center, .. } | Primitive::FadingRectangle { center, .. } => {
+                center.length()
+            }
+            Primitive::Ring { radius, .. } | Primitive::Arc { radius, .. } => *radius,
         })
         .fold(0.0, f32::max)
 }

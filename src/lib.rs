@@ -4,6 +4,8 @@
 //! Implement [`HitFeedback`] on your game's metadata to choose marker
 //! appearance.
 //! Independent observers can use the same metadata for audio or scoring.
+//! Add [`Layer`]s to replace the console style with custom marks that follow
+//! spread independently.
 //! Enable the render feature after installing Bevy assets to draw through a UI
 //! material.
 //! Configuration parsing validates current CS2 console names before replacing
@@ -29,6 +31,7 @@ mod crosshair;
 mod drawing;
 mod geometry;
 mod hit;
+mod layer;
 mod marker;
 mod plugin;
 #[cfg(feature = "render")]
@@ -46,6 +49,8 @@ pub use self::crosshair::Spectator;
 pub use self::drawing::Drawing;
 pub use self::drawing::Primitive;
 pub use self::hit::Hit;
+pub use self::layer::Layer;
+pub use self::layer::Mark;
 pub use self::marker::HitFeedback;
 pub use self::marker::HitMarker;
 pub use self::marker::MarkerAnimation;
